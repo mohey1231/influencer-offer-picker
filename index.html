@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>body{margin:0}img{max-width:100%}</style>
 </head>
-<body>
+<body class="locked">
 <title>منسّق عروض المؤثرين | OutMark</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Readex+Pro:wght@500;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
 /* Layout: working tool — tabs (influencers / campaigns) on the right, sticky campaign draft on the left (RTL); profile opens as a side drawer; phones get bottom sheets */
 :root{
@@ -141,8 +142,25 @@ svg.ic{width:1em;height:1em;flex:none;display:inline-block;vertical-align:-.125e
 
 /* list */
 .list{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.row{display:grid;grid-template-columns:44px minmax(0,1.8fr) 118px minmax(0,1fr) 96px 104px;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line)}
-.client-mode .row{grid-template-columns:44px minmax(0,1.8fr) 118px minmax(0,1fr) 104px}
+.row{display:grid;grid-template-columns:44px minmax(0,1.5fr) minmax(0,1.6fr) 52px minmax(0,.9fr) 92px 100px;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line)}
+.client-mode .row{grid-template-columns:44px minmax(0,1.5fr) minmax(0,1.6fr) 52px minmax(0,.9fr) 100px}
+/* accounts column: one pill per account, each opens that account */
+.accs{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+.acc{display:inline-flex;align-items:center;gap:5px;max-width:100%;font-size:12px;font-weight:600;padding:2px 9px 2px 7px;border-radius:999px;text-decoration:none;background:var(--x-bg);color:var(--x-fg)}
+.acc .h{direction:ltr;unicode-bidi:isolate;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.acc.p-snap{background:var(--snap-bg);color:var(--snap-fg)} .acc.p-tt{background:var(--tt-bg);color:var(--tt-fg)}
+.acc.p-ig{background:var(--ig-bg);color:var(--ig-fg)} .acc.p-yt{background:var(--yt-bg);color:var(--yt-fg)}
+a.acc:hover{text-decoration:underline;text-underline-offset:2px}
+.acc.off{opacity:.6}
+.noacc{font-size:12px;color:var(--muted)}
+/* category A / B / C */
+.cat{justify-self:start;display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 6px;border-radius:8px;font-weight:700;font-size:13px;font-family:var(--f-display);background:var(--sunken);color:var(--muted)}
+.cat-a{background:#7342EA;color:#fff} .cat-b{background:#EEE8FD;color:#4B23B5} .cat-c{background:var(--sunken);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.catn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600}
+.catn .cat{min-width:22px;height:22px;font-size:12px;border-radius:7px}
+.ci small .pico{width:16px;height:16px;font-size:10px;border-radius:5px;display:inline-grid;margin-left:4px;vertical-align:-3px}
+.accrow{text-decoration:none;color:inherit}
+.accrow .pico{width:24px;height:24px;font-size:13px}
 .client-mode .internal{display:none!important}
 .row.head{border-top:0;background:var(--sunken);font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.3px;padding-block:8px}
 .row:not(.head):hover{background:var(--sunken)}
@@ -297,9 +315,9 @@ svg.ic{width:1em;height:1em;flex:none;display:inline-block;vertical-align:-.125e
   .main{padding-bottom:90px}
 }
 @media (max-width:680px){
-  .row,.client-mode .row{grid-template-columns:40px auto minmax(0,1fr) auto;grid-template-areas:"add who who sell" "add plat reg cost";row-gap:6px;padding:10px 12px}
+  .row,.client-mode .row{grid-template-columns:40px auto minmax(0,1fr) auto;grid-template-areas:"add who who sell" "add accs accs accs" "add cat reg cost";row-gap:6px;padding:10px 12px}
   .row.head{display:none}
-  .row .add{grid-area:add} .row .who{grid-area:who} .row .plat{grid-area:plat} .row .reg{grid-area:reg} .row .cost{grid-area:cost} .row .sellc{grid-area:sell}
+  .row .add{grid-area:add} .row .who{grid-area:who} .row .accs{grid-area:accs} .row .cat{grid-area:cat} .row .reg{grid-area:reg} .row .cost{grid-area:cost} .row .sellc{grid-area:sell}
   .row .cost{font-size:12px}
   .brand h1{font-size:20px}
   .brand p{display:none}
@@ -340,8 +358,47 @@ svg.ic{width:1em;height:1em;flex:none;display:inline-block;vertical-align:-.125e
 .btn.primary{box-shadow:0 6px 16px rgba(115,66,234,.25)}
 .newpanel h2,.h2,.pickbar h2{font-weight:800}
 @media (max-width:680px){.logo{height:38px}.top{border-radius:18px;padding:12px 14px}}
+/* login gate: nothing of the tool shows until a listed email signs in */
+body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{display:none!important}
+.gate{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:var(--bg)}
+.gate[hidden]{display:none}
+.gate-card{width:min(400px,100%);background:var(--surface);border-radius:24px;box-shadow:var(--shadow);padding:28px 24px;display:grid;gap:16px}
+.gate-card .brand{justify-content:center;text-align:center;flex-direction:column;gap:10px}
+.gate-card h2{font-family:var(--f-display);font-size:20px;font-weight:800;margin:0;text-align:center}
+.gate-card p.sub2{margin:-8px 0 0;text-align:center;color:var(--muted);font-size:14px}
+.gate-card form{display:grid;gap:12px}
+.gate-card .fld{font-size:13px}
+.gate-card .inp{padding:11px 12px}
+.gate-card .btn.primary{padding:11px 14px;font-weight:600}
+.gate-card .swap{background:none;border:0;padding:0;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;justify-self:center;font-size:14px}
+.gate-card .ok{color:var(--accent);font-size:13px;margin:0}
+.who-me{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ulist{display:grid;gap:8px}
+.urow{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:12px}
+.urow .em{direction:ltr;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.urow .role{font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--sunken);color:var(--muted)}
+.urow .role.admin{background:var(--accent-soft);color:var(--accent)}
+.uform{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:10px;align-items:end}
+@media (max-width:680px){.uform{grid-template-columns:1fr}.urow{grid-template-columns:minmax(0,1fr) auto;row-gap:6px}}
 </style>
 
+
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="brand" id="gateBrand"></div>
+    <h2 id="gTitle">تسجيل الدخول</h2>
+    <p class="sub2" id="gSub">سجّل الدخول بالبريد الإلكتروني الذي أضافه لك المسؤول.</p>
+    <form id="gForm" novalidate>
+      <label class="fld">البريد الإلكتروني<input class="inp" id="gEmail" type="email" dir="ltr" autocomplete="username" required></label>
+      <label class="fld">كلمة المرور<input class="inp" id="gPass" type="password" dir="ltr" autocomplete="current-password" required></label>
+      <label class="fld" id="gPass2Wrap" hidden>تأكيد كلمة المرور<input class="inp" id="gPass2" type="password" dir="ltr" autocomplete="new-password"></label>
+      <button class="btn primary" id="gGo" type="submit">دخول</button>
+      <p class="err" id="gErr" hidden></p>
+      <p class="ok" id="gOk" hidden></p>
+    </form>
+    <button class="swap" id="gSwap" type="button">أول مرة؟ أنشئ كلمة مرور لحسابك</button>
+  </div>
+</div>
 
 <div class="wrap" id="app">
   <header class="top">
@@ -356,6 +413,12 @@ svg.ic{width:1em;height:1em;flex:none;display:inline-block;vertical-align:-.125e
       <label class="switch" title="أوقفه عند مشاركة الشاشة مع العميل لإخفاء التكلفة والربح">
         <input type="checkbox" id="internal" checked> عرض التكلفة والربح
       </label>
+      <span class="who-me" id="meEmail"></span>
+      <button class="btn" id="openUsers" aria-expanded="false" aria-controls="usersPanel" hidden>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.8c1.7.8 2.7 2.5 3 5.2"/></svg>
+        المستخدمون
+      </button>
+      <button class="btn ghost" id="signOut">خروج</button>
       <button class="btn" id="openImport" aria-expanded="false" aria-controls="importPanel">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3h16v-3"/></svg>
         استيراد ملف Excel
@@ -389,11 +452,24 @@ svg.ic{width:1em;height:1em;flex:none;display:inline-block;vertical-align:-.125e
         </label>
       </div>
     </div>
-    <p class="hint">يتعرّف النظام على صف العناوين تلقائيًا: <b>المشهور / الاسم</b>، <b>قيمة الإعلان / التكلفة</b>، <b>سعر البيع</b>، <b>المنطقة</b>، <b>المنصة</b>، <b>رابط الحساب</b>، و<b>المتابعين</b>. وإذا كُتبت المنصة عنوانًا لقسم مثل «منصة سناب شات» فسيتعرّف عليها، وإذا كان الاسم يحمل رابطًا فسيُعتمد رابطًا للحساب. تُحفظ القائمة المرفوعة على هذا المتصفح فقط.</p>
+    <p class="hint">يتعرّف النظام على صف العناوين تلقائيًا: <b>اسم المؤثر</b>، <b>الحسابات / الرابط</b> (ممكن أكثر من رابط في نفس الخانة، أو عمود لكل منصة مثل «سناب» و«تيك توك»)، <b>الفئة</b> (A أو B أو C)، <b>المنطقة</b>، <b>قيمة الإعلان / التكلفة</b>، <b>سعر البيع</b>، و<b>المتابعين</b>. الاسم المكرّر في أكثر من صف يُدمج في مؤثر واحد بكل حساباته، وإذا لم يوجد عمود للفئة تُوزَّع الفئات مؤقتًا. تُحفظ القائمة المرفوعة على هذا المتصفح فقط.</p>
     <div class="frow">
       <button class="btn ghost" id="resetSample" hidden>استعادة البيانات التجريبية</button>
       <button class="btn ghost" id="closeImport">إغلاق</button>
     </div>
+  </section>
+
+  <section class="panel" id="usersPanel" hidden>
+    <h2>المستخدمون المسموح لهم بالدخول</h2>
+    <form class="uform" id="uForm" novalidate>
+      <label class="fld">البريد الإلكتروني<input class="inp" id="uEmail" type="email" dir="ltr" placeholder="name@company.com" autocomplete="off"></label>
+      <label class="fld">الصلاحية<select class="sel" id="uRole"><option value="member">عضو</option><option value="admin">مسؤول (يضيف ويحذف المستخدمين)</option></select></label>
+      <button class="btn primary" id="uAdd" type="submit">إضافة</button>
+    </form>
+    <p class="err" id="uErr" hidden></p>
+    <div class="ulist" id="uList"></div>
+    <p class="hint">بعد الإضافة، يفتح الشخص الصفحة ويختار «أول مرة؟ أنشئ كلمة مرور» بنفس البريد. وإذا نسي كلمة المرور اضغط «إعادة تعيين» بجانب بريده ليُنشئ كلمة مرور جديدة.</p>
+    <div class="frow"><button class="btn ghost" id="closeUsers">إغلاق</button></div>
   </section>
 
   <section class="home" id="homeView" aria-label="الحملات">
@@ -442,11 +518,13 @@ svg.ic{width:1em;height:1em;flex:none;display:inline-block;vertical-align:-.125e
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
               <input id="q" type="search" placeholder="ابحث باسم المؤثر" autocomplete="off">
             </div>
+            <select class="sel" id="cat" aria-label="الفئة"></select>
             <select class="sel" id="region" aria-label="المنطقة"></select>
             <select class="sel" id="sort" aria-label="الترتيب">
               <option value="price-desc">السعر: من الأعلى</option>
               <option value="price-asc">السعر: من الأقل</option>
               <option value="name">الاسم</option>
+              <option value="cat">الفئة</option>
               <option value="region">المنطقة</option>
             </select>
           </div>
@@ -548,6 +626,13 @@ const SAMPLE = [
  ["مؤثر تجريبي 23","إنستجرام","حائل",3000],
  ["مؤثر تجريبي 24","إنستجرام","الرياض",2000]
 ];
+// demo accounts: some people get a 2nd/3rd platform so the accounts column shows several links
+const DEMO_HANDLE=k=>"inf.demo"+k;
+const PROFILE_URL={"سناب شات":h=>"https://www.snapchat.com/add/"+h,"تيك توك":h=>"https://www.tiktok.com/@"+h,"إنستجرام":h=>"https://www.instagram.com/"+h,
+  "يوتيوب":h=>"https://www.youtube.com/@"+h,"إكس":h=>"https://x.com/"+h};
+const DEMO_URL={"سناب شات":PROFILE_URL["سناب شات"],"تيك توك":PROFILE_URL["تيك توك"],"إنستجرام":PROFILE_URL["إنستجرام"]};
+const DEMO_CATS="ABCABACBCAABCBACABCCABAB";
+const CATS=["A","B","C"];
 const REGION_COLORS=["#2E9A6B","#7C4DDB","#D98A0B","#1F8FD1","#D3428A","#6E9E1A","#D2483A","#14A0A0","#8A6D3B","#5865C8"];
 const STATUS={draft:"مسودة",sent:"أُرسلت للعميل",approved:"معتمدة",done:"منفّذة"};
 const PAGE=200, CHUNK=400;
@@ -598,6 +683,28 @@ const platBadge=p=>`<span class="plat p-${pk(p)}">${pIcon(p)}${esc(p)}</span>`;
 const pico=p=>`<span class="pico pi-${pk(p)}" aria-hidden="true">${pIcon(p)}</span>`;
 function cleanLink(u){u=String(u||"").trim(); if(!u)return""; if(/^https?:\/\//i.test(u))return u;
   if(/^(www\.|[a-z0-9-]+\.(com|net|app|me|tv)\/)/i.test(u))return"https://"+u; return"";}
+function platFromLink(u){u=String(u||"");
+  if(/snapchat\.com|snap\.com/i.test(u))return"سناب شات"; if(/tiktok\.com/i.test(u))return"تيك توك";
+  if(/instagram\.com|instagr\.am/i.test(u))return"إنستجرام"; if(/youtube\.com|youtu\.be/i.test(u))return"يوتيوب";
+  if(/\/\/(www\.)?(twitter|x)\.com/i.test(u))return"إكس"; return"";}
+function handleOf(u){const l=cleanLink(u);if(!l)return"";
+  const parts=l.replace(/^https?:\/\/[^/]+\/?/i,"").split(/[?#]/)[0].split("/").filter(p=>p&&!/^(add|user|c|channel)$/i.test(p));
+  const h=decodeURIComponent(parts[0]||"").replace(/^@/,"");return h?"@"+h:l.replace(/^https?:\/\/(www\.)?/i,"");}
+// a cell can hold several links (new line, space, comma or «،» between them)
+function splitLinks(s){return String(s||"").split(/[\s,،;|]+/).map(cleanLink).filter(Boolean);}
+function normCat(v){const s=String(v||"").trim().toUpperCase().replace(/^(الفئة|فئة|CATEGORY|CAT)\s*/,"");
+  return /^[ABC]$/.test(s)?s:s==="أ"?"A":s==="ب"?"B":s==="ج"||s==="س"?"C":"";}
+const autoCat=name=>CATS[hue(name+"|cat")%3]; // placeholder until the real sheet carries categories
+function accountsOf(i){
+  if(Array.isArray(i.accounts)&&i.accounts.length)return i.accounts;
+  return i.link||(i.platform&&i.platform!=="غير محدد")?[{platform:i.platform||"غير محدد",link:i.link||""}]:[];}
+const platsOf=i=>[...new Set(accountsOf(i).map(a=>a.platform))];
+const catBadge=c=>`<span class="cat cat-${esc(String(c||"").toLowerCase())}">${esc(c||"—")}</span>`;
+function accList(i){const acc=accountsOf(i);
+  if(!acc.length)return`<span class="accs"><span class="noacc">بدون حساب</span></span>`;
+  return `<span class="accs">${acc.map(a=>{const l=cleanLink(a.link),h=handleOf(l);
+    return l?`<a class="acc p-${pk(a.platform)}" href="${esc(l)}" target="_blank" rel="noopener noreferrer" title="${esc(a.platform)}: ${esc(l)}">${pIcon(a.platform)}<span class="h">${esc(h)}</span></a>`
+      :`<span class="acc off p-${pk(a.platform)}" title="${esc(a.platform)} بدون رابط">${pIcon(a.platform)}<span class="h">بدون رابط</span></span>`;}).join("")}</span>`;}
 function initials(n){const w=String(n).trim().split(/\s+/).map(x=>x.length>3?x.replace(/^ال/,""):x).filter(Boolean);return (w[0]?.[0]||"")+(w[1]?.[0]||"");}
 function hue(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return h;}
 function avatar(i){return `<span class="av" style="background:hsl(${hue(i.name)} 42% 40%)" aria-hidden="true">${esc(initials(i.name))}<span class="badge pi-${pk(i.platform)}">${pIcon(i.platform)}</span></span>`;}
@@ -609,27 +716,49 @@ function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth
 const blankOpen=()=>({id:null,name:"",client:"",status:"draft",savedSig:null});
 const state={lib:[],libSource:"sample",cart:[],open:blankOpen(),budget:null,
   internal:true,margin:20,shown:PAGE,view:"home",camps:[],db:null,dbState:"loading",profile:null,cf:{q:"",status:"all"},
-  f:{q:"",platform:"all",region:"all",min:null,max:null,sort:"price-desc",fit:false}};
+  f:{q:"",platform:"all",region:"all",cat:"all",min:null,max:null,sort:"price-desc",fit:false}};
 
+// one item = one person; a person can hold several accounts (snap / tiktok / insta …)
 function mkItem(o){
-  const it={id:o.platform+"|"+o.name,name:o.name,platform:o.platform||"غير محدد",region:o.region||"غير محدد",
-    link:o.link||"",followers:o.followers||"",cost:o.cost??null,sell:o.sell??null,
+  let accounts=(o.accounts||[]).map(a=>({platform:platFromLink(a.link)||a.platform||"غير محدد",link:cleanLink(a.link)}));
+  if(!accounts.length&&(o.link||(o.platform&&o.platform!=="غير محدد")))accounts=[{platform:platFromLink(o.link)||o.platform||"غير محدد",link:cleanLink(o.link)}];
+  const it={id:"p|"+o.name,name:o.name,accounts,platform:accounts[0]?.platform||o.platform||"غير محدد",link:accounts.find(a=>a.link)?.link||"",
+    category:normCat(o.category)||autoCat(o.name),catSrc:normCat(o.category)?"sheet":"auto",region:o.region||"غير محدد",
+    followers:o.followers||"",cost:o.cost??null,sell:o.sell??null,
     costSrc:o.costSrc||(o.cost!=null?"sheet":"derived"),sellSrc:o.sellSrc||(o.sell!=null?"sheet":"derived")};
   derive(it); return it;
+}
+// same name on several rows / sheets → one person with all their accounts (keeps the higher price)
+function mergeByName(items){
+  const m=new Map();
+  for(const it of items){const ex=m.get(it.id);if(!ex){m.set(it.id,it);continue;}
+    for(const a of it.accounts)if(!ex.accounts.some(b=>a.link?b.link===a.link:(!b.link&&b.platform===a.platform)))ex.accounts.push(a);
+    if((it.sell||0)>(ex.sell||0))Object.assign(ex,{cost:it.cost,sell:it.sell,costSrc:it.costSrc,sellSrc:it.sellSrc});
+    if(ex.region==="غير محدد"&&it.region!=="غير محدد")ex.region=it.region;
+    if(ex.catSrc!=="sheet"&&it.catSrc==="sheet"){ex.category=it.category;ex.catSrc="sheet";}
+    if(!ex.followers&&it.followers)ex.followers=it.followers;
+    ex.platform=ex.accounts[0]?.platform||ex.platform;ex.link=ex.accounts.find(a=>a.link)?.link||"";}
+  return [...m.values()];
 }
 function derive(it){const m=1+state.margin/100;
   if(it.sellSrc==="derived"&&it.cost!=null)it.sell=r50(it.cost*m);
   if(it.costSrc==="derived"&&it.sell!=null)it.cost=Math.round(it.sell/m);}
-function sampleLib(){return SAMPLE.map(([name,platform,region,cost])=>mkItem({name,platform,region,cost}));}
-const pack=i=>[i.name,i.platform,i.region,i.costSrc==="sheet"?i.cost:null,i.sellSrc==="sheet"?i.sell:null,i.link||"",i.followers||""];
-const unpack=a=>mkItem({name:a[0],platform:a[1],region:a[2],cost:a[3],sell:a[4],link:a[5],followers:a[6]});
-const snapItem=i=>({id:i.id,name:i.name,platform:i.platform,region:i.region,sell:i.sell,cost:i.cost,link:i.link||"",followers:i.followers||""});
+function sampleLib(){return SAMPLE.map(([name,platform,region,cost],k)=>{
+  const ps=Object.keys(DEMO_URL),own=[platform];
+  if(k%3===0)own.push(ps[(ps.indexOf(platform)+1)%3]); if(k%5===0)own.push(ps[(ps.indexOf(platform)+2)%3]);
+  return mkItem({name,region,cost,category:DEMO_CATS[k],accounts:own.map(p=>({platform:p,link:DEMO_URL[p](DEMO_HANDLE(k+1))}))});});}
+const pack=i=>[i.name,i.platform,i.region,i.costSrc==="sheet"?i.cost:null,i.sellSrc==="sheet"?i.sell:null,i.link||"",i.followers||"",
+  i.catSrc==="sheet"?i.category:"",accountsOf(i).map(a=>[a.platform,a.link])];
+const unpack=a=>mkItem({name:a[0],platform:a[1],region:a[2],cost:a[3],sell:a[4],link:a[5],followers:a[6],category:a[7],
+  accounts:Array.isArray(a[8])?a[8].map(([platform,link])=>({platform,link})):null});
+const snapItem=i=>({id:i.id,name:i.name,platform:i.platform,accounts:accountsOf(i).map(a=>({...a})),category:i.category,
+  region:i.region,sell:i.sell,cost:i.cost,link:i.link||"",followers:i.followers||""});
 
 // restore local conveniences
 (function restore(){
   const s=store.get("inf-settings"); if(s){state.margin=+s.margin||20; state.internal=s.internal!==false;}
-  const lib=store.get("inf-lib2");
-  if(lib&&Array.isArray(lib.rows)&&lib.rows.length){state.lib=lib.rows.map(unpack);state.libSource="local";}
+  const lib=store.get("inf-lib3")||store.get("inf-lib2"); // lib2 = older one-row-per-platform format
+  if(lib&&Array.isArray(lib.rows)&&lib.rows.length){state.lib=mergeByName(lib.rows.map(unpack));state.libSource="local";}
   else state.lib=sampleLib();
   const d=store.get("inf-draft2");
   if(d&&Array.isArray(d.cart)){state.cart=d.cart;state.open=Object.assign(blankOpen(),d.open||{});state.budget=d.budget??null;}
@@ -642,7 +771,8 @@ const isDirty=()=>state.cart.length>0||state.open.id||state.open.name? sig()!==s
 // ---------- derived ----------
 const inCartSet=()=>new Set(state.cart.map(i=>i.id));
 function totals(items){let sell=0,cost=0;for(const i of items){sell+=i.sell||0;cost+=i.cost||0;}return{sell,cost,profit:sell-cost};}
-function groups(items){const g=new Map();for(const i of items){if(!g.has(i.platform))g.set(i.platform,[]);g.get(i.platform).push(i);}return g;}
+function groups(items){const g=new Map(),cat=i=>i.category||autoCat(i.name);
+  for(const c of CATS)for(const i of items)if(cat(i)===c){if(!g.has(c))g.set(c,[]);g.get(c).push(i);}return g;}
 function regionColor(){const regs=[...new Set(state.lib.map(i=>i.region))].sort((a,b)=>a.localeCompare(b,"ar"));
   const m=new Map();regs.forEach((r,k)=>m.set(r,REGION_COLORS[k%REGION_COLORS.length]));return m;}
 function membership(){const m=new Map();
@@ -653,26 +783,28 @@ function filtered(){
   const rem=state.budget!=null?state.budget-totals(state.cart).sell:null;
   const a=state.lib.filter(i=>{
     if(q&&!i.name.includes(q))return false;
-    if(f.platform!=="all"&&i.platform!==f.platform)return false;
+    if(f.platform!=="all"&&!platsOf(i).includes(f.platform))return false;
     if(f.region!=="all"&&i.region!==f.region)return false;
+    if(f.cat!=="all"&&i.category!==f.cat)return false;
     if(f.min!=null&&i.sell<f.min)return false;
     if(f.max!=null&&i.sell>f.max)return false;
     if(f.fit&&rem!=null&&!inCart.has(i.id)&&i.sell>rem)return false;
     return true;});
   const s=f.sort;
-  a.sort((x,y)=>s==="price-asc"?x.sell-y.sell:s==="name"?x.name.localeCompare(y.name,"ar"):s==="region"?(x.region.localeCompare(y.region,"ar")||y.sell-x.sell):y.sell-x.sell);
+  a.sort((x,y)=>s==="price-asc"?x.sell-y.sell:s==="name"?x.name.localeCompare(y.name,"ar"):s==="region"?(x.region.localeCompare(y.region,"ar")||y.sell-x.sell):s==="cat"?(x.category.localeCompare(y.category)||y.sell-x.sell):y.sell-x.sell);
   return a;
 }
 
 // ---------- render: library ----------
 function renderFilters(){
-  const counts=new Map();for(const i of state.lib)counts.set(i.platform,(counts.get(i.platform)||0)+1);
+  const counts=new Map();for(const i of state.lib)for(const p of platsOf(i))counts.set(p,(counts.get(p)||0)+1);
   if(state.f.platform!=="all"&&!counts.has(state.f.platform))state.f.platform="all";
   $("platChips").innerHTML=`<button class="chip" data-p="all" aria-pressed="${state.f.platform==="all"}">كل المنصات <span class="c num">${fmt(state.lib.length)}</span></button>`+
     [...counts.keys()].map(p=>`<button class="chip" data-p="${esc(p)}" aria-pressed="${state.f.platform===p}">${pIcon(p)}${esc(p)} <span class="c num">${fmt(counts.get(p))}</span></button>`).join("");
   const regs=[...new Set(state.lib.map(i=>i.region))].sort((a,b)=>a.localeCompare(b,"ar"));
   if(state.f.region!=="all"&&!regs.includes(state.f.region))state.f.region="all";
   $("region").innerHTML=`<option value="all">كل المناطق</option>`+regs.map(r=>`<option value="${esc(r)}"${r===state.f.region?" selected":""}>${esc(r)}</option>`).join("");
+  $("cat").innerHTML=`<option value="all">كل الفئات</option>`+CATS.map(c=>`<option value="${c}"${c===state.f.cat?" selected":""}>الفئة ${c} (${fmt(state.lib.filter(i=>i.category===c).length)})</option>`).join("");
 }
 function campBadge(list){
   if(!list||!list.length)return"";
@@ -687,17 +819,18 @@ function renderList(){
   $("count").innerHTML=`<b class="num">${fmt(rows.length)}</b> مؤثر من <span class="num">${fmt(state.lib.length)}</span>`;
   $("addAll").textContent=notIn?`أضف كل النتائج (${fmt(notIn)})`:"أُضيفت كل النتائج";
   $("addAll").disabled=!notIn;
-  const head=`<div class="row head"><span></span><span>المشهور</span><span>المنصة</span><span>المنطقة</span><span class="end internal">التكلفة</span><span class="end">سعر البيع</span></div>`;
+  const head=`<div class="row head"><span></span><span>اسم المؤثر</span><span>الحسابات</span><span>الفئة</span><span>المنطقة</span><span class="end internal">التكلفة</span><span class="end">سعر البيع</span></div>`;
   if(!rows.length){$("list").innerHTML=head+`<div class="empty">لا يوجد مؤثرون مطابقون لهذه الفلاتر. وسّع نطاق السعر أو امسح الفلاتر.</div>`;return;}
   const vis=rows.slice(0,state.shown);
   $("list").innerHTML=head+vis.map(i=>{
     const sel=inCart.has(i.id),over=!sel&&rem!=null&&i.sell>rem;
     const fol=fmtFollowers(i.followers);
-    const sub=[fol?`<span class="num">${esc(fol)}</span> متابع`:"",campBadge(mem.get(i.id)),cleanLink(i.link)?"":"بدون رابط"].filter(Boolean).join("");
+    const sub=[fol?`<span class="num">${esc(fol)}</span> متابع`:"",campBadge(mem.get(i.id))].filter(Boolean).join("");
     return `<div class="row${sel?" sel":""}" data-id="${esc(i.id)}">
       <button class="add" data-act="toggle" aria-pressed="${sel}" aria-label="${sel?"إزالة":"إضافة"} ${esc(i.name)}">${sel?UI.ok:UI.plus}</button>
       <div class="who">${avatar(i)}<div class="txt"><button class="nameBtn" data-act="profile" title="عرض ملف ${esc(i.name)}">${esc(i.name)}</button>${sub?`<span class="sub">${sub}</span>`:""}</div></div>
-      ${platBadge(i.platform)}
+      ${accList(i)}
+      ${catBadge(i.category)}
       <span class="reg"><i style="background:${rc.get(i.region)}"></i>${esc(i.region)}</span>
       <span class="end cost num internal">${fmt(i.cost)}${i.costSrc==="derived"?' <span class="tag">تقديري</span>':""}</span>
       <span class="end sellc num${over?" over":""}" ${over?'title="أعلى من المتبقي في الميزانية"':""}>${fmt(i.sell)}</span>
@@ -744,7 +877,7 @@ function renderCamps(){
         <h3>${esc(c.name||"حملة بدون اسم")}</h3><span class="status st-${esc(c.status||"draft")}">${esc(STATUS[c.status]||STATUS.draft)}</span></div>
       ${c.client?`<div class="client">${esc(c.client)}</div>`:""}
       <div class="meta"><span><span class="num">${items.length}</span> مؤثر</span><span>آخر تعديل <span class="num">${dateStr(c.updatedAt)}</span></span></div>
-      ${items.length?`<div class="plats">${[...g].map(([p,arr])=>`<span class="plat p-${pk(p)}">${pIcon(p)}<span class="num">${arr.length}</span></span>`).join("")}</div>`:`<div class="meta">لم يُختر أي مؤثر بعد</div>`}
+      ${items.length?`<div class="plats">${[...g].map(([c,arr])=>`<span class="catn">${catBadge(c)}<span class="num">${arr.length}</span></span>`).join("")}</div>`:`<div class="meta">لم يُختر أي مؤثر بعد</div>`}
       <div class="money"><span class="big num">${fmt(t.sell)} <small style="font-size:12px;font-weight:500">ر.س</small></span>
         <span class="internal" style="color:var(--gold);font-size:13px;font-weight:600">ربح <span class="num">${fmt(t.profit)}</span></span></div>
       ${c.budget!=null&&c.budget>0?`<div class="meter"><div class="bar"><span style="width:${Math.min(100,t.sell/c.budget*100)}%"></span></div>
@@ -784,8 +917,8 @@ function renderCart(){
     $("cartBody").innerHTML=`<div class="cart-empty">لم يُضف أي مؤثر بعد.<br>اضغط <b>+</b> بجانب أي مؤثر لإضافته، وسيُحسب الإجمالي تلقائيًا.</div>`;
   }else{
     $("cartBody").innerHTML=[...g].map(([p,arr])=>{const st=totals(arr);
-      return `<div class="grp"><div class="grp-h">${platBadge(p)}<span class="sub">إجمالي <b class="num">${fmt(st.sell)}</b></span></div>`+
-      arr.map(i=>`<div class="ci" data-id="${esc(i.id)}"><button class="nm" data-act="profile">${esc(i.name)}<small>${esc(i.region)}</small></button><span class="num">${fmt(i.sell)}</span><button class="x" data-act="remove" aria-label="إزالة ${esc(i.name)}">${UI.x}</button></div>`).join("")+`</div>`;}).join("");
+      return `<div class="grp"><div class="grp-h"><span class="catn">${catBadge(p)}الفئة ${esc(p)}</span><span class="sub">إجمالي <b class="num">${fmt(st.sell)}</b></span></div>`+
+      arr.map(i=>`<div class="ci" data-id="${esc(i.id)}"><button class="nm" data-act="profile">${esc(i.name)}<small>${platsOf(i).map(pico).join("")}${esc(i.region)}</small></button><span class="num">${fmt(i.sell)}</span><button class="x" data-act="remove" aria-label="إزالة ${esc(i.name)}">${UI.x}</button></div>`).join("")+`</div>`;}).join("");
   }
   const pct=t.cost?Math.round(t.profit/t.cost*100):0;
   $("totals").innerHTML=`<div><span>إجمالي العرض للعميل</span><span class="big num">${fmt(t.sell)} <small style="font-size:13px;font-weight:500">ر.س</small></span></div>
@@ -802,14 +935,13 @@ function renderProfile(){
   const d=$("drawer"),id=state.profile;
   if(!id){d.hidden=true;$("scrim").hidden=true;return;}
   const i=findItem(id); if(!i){state.profile=null;d.hidden=true;$("scrim").hidden=true;return;}
-  const lib=state.lib.find(x=>x.id===id)||i, inCart=inCartSet().has(id), link=cleanLink(lib.link);
+  const lib=state.lib.find(x=>x.id===id)||i, inCart=inCartSet().has(id), acc=accountsOf(lib).filter(a=>cleanLink(a.link));
   const mem=membership().get(id)||[], fol=fmtFollowers(lib.followers);
-  const sibs=state.lib.filter(x=>x.name===lib.name&&x.id!==id);
   const profit=(lib.sell||0)-(lib.cost||0), pct=lib.cost?Math.round(profit/lib.cost*100):0;
   d.innerHTML=`<div class="dr-head">
       <div class="dr-top">
         <div class="dr-id">${avatar(lib)}<div style="min-width:0"><h2 id="drName">${esc(lib.name)}</h2>
-          <div class="sub">${platBadge(lib.platform)}<span class="reg">${UI.pin}${esc(lib.region)}</span></div></div></div>
+          <div class="sub"><span class="catn">${catBadge(lib.category)}الفئة ${esc(lib.category)}</span><span class="reg">${UI.pin}${esc(lib.region)}</span></div></div></div>
         <button class="x" data-act="close" aria-label="إغلاق الملف" style="width:34px;height:34px">${UI.x}</button>
       </div>
       <div class="stats">
@@ -820,16 +952,21 @@ function renderProfile(){
       </div>
       <div class="dr-acts">
         <button class="btn ${inCart?"":"primary"}" data-act="toggle">${inCart?UI.ok+" مضاف إلى الحملة الحالية":UI.plus+" أضف إلى الحملة"}</button>
-        ${link?`<a class="btn" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${pIcon(lib.platform)} فتح الحساب ${UI.ext}</a>`:`<span class="btn" aria-disabled="true" style="opacity:.55;cursor:default">لا يوجد رابط للحساب</span>`}
+        ${acc.length===1?`<a class="btn" href="${esc(cleanLink(acc[0].link))}" target="_blank" rel="noopener noreferrer">${pIcon(acc[0].platform)} فتح الحساب ${UI.ext}</a>`:acc.length?"":`<span class="btn" aria-disabled="true" style="opacity:.55;cursor:default">لا يوجد رابط للحساب</span>`}
       </div>
     </div>
     <div class="dr-body">
+      <section><h3>الحسابات <span class="pill num">${accountsOf(lib).length}</span></h3>
+        ${accountsOf(lib).length?`<div class="clist">${accountsOf(lib).map(a=>{const l=cleanLink(a.link);
+          return l?`<a class="citem accrow" href="${esc(l)}" target="_blank" rel="noopener noreferrer">${pico(a.platform)}<span class="cn">${esc(a.platform)} · <span dir="ltr">${esc(handleOf(l))}</span></span>${UI.ext}</a>`
+            :`<span class="citem accrow">${pico(a.platform)}<span class="cn">${esc(a.platform)} · بدون رابط</span><span></span></span>`;}).join("")}</div>`
+          :`<p class="muted-note">لا توجد حسابات مسجّلة.</p>`}
+      </section>
       <section><h3>الحملات التي يشارك فيها</h3>
         ${mem.length?`<div class="clist">${mem.sort((a,b)=>(b.camp.updatedAt||0)-(a.camp.updatedAt||0)).map(({camp,item})=>`<button class="citem" data-act="openCamp" data-cid="${esc(camp.id)}"><span class="cn">${esc(camp.name||"حملة بدون اسم")}</span><span class="status st-${esc(camp.status||"draft")}">${esc(STATUS[camp.status]||STATUS.draft)}</span><span class="num">${fmt(item.sell)}</span></button>`).join("")}</div>`
           :`<p class="muted-note">غير مضاف إلى أي حملة محفوظة بعد.</p>`}
         ${inCart&&(!state.open.id||!mem.some(m=>m.camp.id===state.open.id))?`<p class="muted-note" style="margin-top:8px">ومضاف إلى الحملة الحالية${state.open.id?" (لم تُحفظ بعد)":""}.</p>`:""}
       </section>
-      ${sibs.length?`<section><h3>الاسم نفسه على منصات أخرى</h3><div class="sibs">${sibs.map(s=>`<button class="sib" data-act="sib" data-sid="${esc(s.id)}">${pico(s.platform)}${esc(s.platform)} · <span class="num">${fmt(s.sell)}</span></button>`).join("")}</div></section>`:""}
     </div>`;
   d.hidden=false;$("scrim").hidden=false;
 }
@@ -910,12 +1047,13 @@ $("newForm").addEventListener("submit",async e=>{
 // ---------- filters / tabs ----------
 $("q").addEventListener("input",e=>{state.f.q=e.target.value;state.shown=PAGE;renderList();});
 $("region").addEventListener("change",e=>{state.f.region=e.target.value;state.shown=PAGE;renderList();});
+$("cat").addEventListener("change",e=>{state.f.cat=e.target.value;state.shown=PAGE;renderList();});
 $("sort").addEventListener("change",e=>{state.f.sort=e.target.value;renderList();});
 $("pmin").addEventListener("input",e=>{state.f.min=parseNum(e.target.value);state.shown=PAGE;renderList();});
 $("pmax").addEventListener("input",e=>{state.f.max=parseNum(e.target.value);state.shown=PAGE;renderList();});
 $("fit").addEventListener("change",e=>{state.f.fit=e.target.checked;renderList();});
 $("platChips").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;state.f.platform=c.dataset.p;state.shown=PAGE;renderFilters();renderList();});
-$("clearFilters").addEventListener("click",()=>{state.f={q:"",platform:"all",region:"all",min:null,max:null,sort:state.f.sort,fit:false};
+$("clearFilters").addEventListener("click",()=>{state.f={q:"",platform:"all",region:"all",cat:"all",min:null,max:null,sort:state.f.sort,fit:false};
   $("q").value="";$("pmin").value="";$("pmax").value="";$("fit").checked=false;renderFilters();renderList();});
 $("internal").addEventListener("change",e=>{state.internal=e.target.checked;saveSettings();renderAll();});
 
@@ -997,7 +1135,7 @@ function assembleLibrary(){
   if(!libMeta||!libMeta.chunks)return;
   const rows=[];
   for(let k=0;k<libMeta.chunks;k++){const ch=libChunks.get("c"+k);if(!ch||ch.ver!==libMeta.ver)return;rows.push(...ch.rows);}
-  state.lib=rows.map(unpack);state.libSource="db";store.set("inf-lib2",{rows});
+  state.lib=mergeByName(rows.map(unpack));state.libSource="db";store.set("inf-lib3",{rows});
   renderAll();
 }
 async function writeLibrary(items){
@@ -1037,7 +1175,7 @@ $("closeImport").addEventListener("click",()=>openImport(false));
 $("margin").addEventListener("change",async e=>{const v=parseNum(e.target.value);state.margin=v==null?20:Math.max(0,v);
   state.lib.forEach(derive);saveSettings();renderAll();
   if(state.db){try{await state.db.doc("settings/main").set({margin:state.margin});}catch(err){}}});
-$("resetSample").addEventListener("click",()=>{state.lib=sampleLib();state.libSource="sample";store.del("inf-lib2");renderAll();toast("استُعيدت البيانات التجريبية");});
+$("resetSample").addEventListener("click",()=>{state.lib=sampleLib();state.libSource="sample";store.del("inf-lib3");store.del("inf-lib2");renderAll();toast("استُعيدت البيانات التجريبية");});
 const drop=$("drop");
 ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over");}));
 ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over");}));
@@ -1052,7 +1190,7 @@ function readFile(file){
       const single=(document.querySelector("input[name=single]:checked")||{}).value||"cost";
       const res=parseWorkbook(wb,single);
       if(!res.items.length){toast("لم يُعثر على صف عناوين يحتوي «المشهور» أو «الاسم» مع عمود سعر. راجع العناوين وحاول مجددًا.");return;}
-      state.lib=res.items;state.libSource="local";store.set("inf-lib2",{rows:res.items.map(pack)});state.shown=PAGE;
+      state.lib=res.items;state.libSource="local";store.set("inf-lib3",{rows:res.items.map(pack)});state.shown=PAGE;
       renderAll();openImport(false);
       let shared=false;try{shared=await writeLibrary(res.items);}catch(err){shared=false;}
       if(shared)state.libSource="db";
@@ -1062,9 +1200,12 @@ function readFile(file){
   rd.readAsArrayBuffer(file);
 }
 function mapHeader(texts){
-  const c={};
+  const c={accCols:[]};
   texts.forEach((t,k)=>{if(!t)return;
     if(c.name==null&&/^(المشهور|المشاهير|الاسم|اسم المشهور|اسم المؤثر|المؤثر|اسم الحساب)$/.test(t))c.name=k;
+    else if(c.cat==null&&/^(ال)?(فئة|فئه|تصنيف)|^category$|^class$/i.test(t))c.cat=k;
+    else if(t.length<24&&!/^منص/.test(t)&&!/(سعر|تكلف|قيمة|مبلغ|متابع)/.test(t)&&normPlatform(t))c.accCols.push({k,platform:normPlatform(t)}); // e.g. a «سناب» column full of links
+    else if(c.link==null&&/^(ال)?(حساب|حسابات|رابط|روابط|لينك|لينكات)/.test(t))c.link=k;
     else if(c.sell==null&&/(سعر البيع|سعر العميل|البيع|للعميل)/.test(t))c.sell=k;
     else if(c.cost==null&&/(التكلفة|تكلفة|سعر المؤثر|قيمة ال[إا]علان|القيمة|السعر|المبلغ)/.test(t))c.cost=k;
     else if(c.region==null&&/(المنطق|المدين)/.test(t))c.region=k;
@@ -1074,7 +1215,7 @@ function mapHeader(texts){
   return c;
 }
 function parseWorkbook(wb,single){
-  const out=new Map();let sheets=0,noLink=0;
+  const out=[];let sheets=0,noLink=0;
   for(const sn of wb.SheetNames){
     const ws=wb.Sheets[sn];if(!ws||!ws["!ref"])continue;
     const R=XLSX.utils.decode_range(ws["!ref"]);let cols=null,platform=normPlatform(sn),got=0;
@@ -1089,18 +1230,23 @@ function parseWorkbook(wb,single){
       if(!name||/(اجمال|إجمال|المجموع)/.test(name))continue;
       const cost=cols.cost!=null?parseNum(cells[cols.cost]?.v):null,sell=cols.sell!=null?parseNum(cells[cols.sell]?.v):null;
       if((cost==null||cost<=0)&&(sell==null||sell<=0))continue;
-      let link="";
-      if(cols.link!=null)link=cleanLink(cells[cols.link]?.l?.Target)||cleanLink(texts[cols.link]);
-      if(!link)link=cleanLink(cells[cols.name]?.l?.Target);
-      if(!link)noLink++;
       const pf=cols.platform!=null?(normPlatform(texts[cols.platform])||texts[cols.platform]):platform;
-      const it=mkItem({name,platform:pf||"غير محدد",region:cols.region!=null?texts[cols.region]:"",link,
+      const cellLinks=k=>{const c=cells[k];return [...new Set([cleanLink(c?.l?.Target),...splitLinks(texts[k])].filter(Boolean))];};
+      const accounts=[];
+      if(cols.link!=null)for(const l of cellLinks(cols.link))accounts.push({platform:platFromLink(l)||pf,link:l});
+      for(const ac of cols.accCols){const ls=cellLinks(ac.k),h=(texts[ac.k]||"").trim().replace(/^@/,"");
+        if(ls.length)for(const l of ls)accounts.push({platform:ac.platform,link:l});
+        else if(/^[\w.\-]{2,40}$/.test(h)&&PROFILE_URL[ac.platform])accounts.push({platform:ac.platform,link:PROFILE_URL[ac.platform](h)});} // bare username → profile link
+      if(!accounts.length){const l=cleanLink(cells[cols.name]?.l?.Target);if(l)accounts.push({platform:platFromLink(l)||pf,link:l});}
+      if(!accounts.length)noLink++;
+      const it=mkItem({name,platform:pf||"غير محدد",accounts,region:cols.region!=null?texts[cols.region]:"",
+        category:cols.cat!=null?texts[cols.cat]:"",
         followers:cols.followers!=null?texts[cols.followers]:"",cost:cost>0?cost:null,sell:sell>0?sell:null});
-      out.set(it.id,it);got++;
+      out.push(it);got++;
     }
     if(got)sheets++;
   }
-  return {items:[...out.values()],sheets,noLink};
+  return {items:mergeByName(out),sheets,noLink};
 }
 
 // ---------- PDF export (table drawn on canvas so Arabic shapes correctly, then placed on A4 landscape pages) ----------
@@ -1109,7 +1255,7 @@ const PDF={W:1123,H:794,S:2.5,M:56,teal:"#1E95B5",tealSoft:"#E2F1F6",zebra:"#EFE
 function fitText(ctx,s,max){s=String(s??"");if(ctx.measureText(s).width<=max)return s;
   while(s.length>1&&ctx.measureText(s+"…").width>max)s=s.slice(0,-1);return s+"…";}
 function pdfColumns(internal,items){
-  const cols=[{k:"name",l:"المشهور",w:2.3,a:"start",b:true},{k:"platform",l:"المنصة",w:1.15,a:"center"},{k:"region",l:"المنطقة",w:1.15,a:"center"}];
+  const cols=[{k:"name",l:"اسم المؤثر",w:2.1,a:"start",b:true},{k:"accs",l:"الحسابات",w:2,a:"start"},{k:"cat",l:"الفئة",w:.6,a:"center"},{k:"region",l:"المنطقة",w:1.1,a:"center"}];
   if(items.some(i=>fmtFollowers(i.followers)))cols.push({k:"followers",l:"المتابعين",w:.95,a:"center"});
   cols.push({k:"sell",l:"قيمة الإعلان (ر.س)",w:1.35,a:"end",n:true});
   if(internal)cols.push({k:"cost",l:"التكلفة",w:1.2,a:"end",n:true},{k:"profit",l:"الربح",w:1.2,a:"end",n:true});
@@ -1119,9 +1265,9 @@ function pdfColumns(internal,items){
 }
 function pdfRows(internal){
   const items=state.cart,g=groups(items),rows=[];
-  for(const [p,arr] of g)for(const i of arr)rows.push({t:"item",name:i.name,platform:p,region:i.region,followers:fmtFollowers(i.followers),
-    sell:i.sell,cost:i.cost,profit:(i.sell||0)-(i.cost||0),link:cleanLink(i.link)});
-  if(g.size>1)for(const [p,arr] of g){const s=totals(arr);rows.push({t:"sub",name:`إجمالي ${p}`,sell:s.sell,cost:s.cost,profit:s.profit});}
+  for(const [p,arr] of g)for(const i of arr)rows.push({t:"item",name:i.name,cat:p,region:i.region,followers:fmtFollowers(i.followers),
+    accs:accountsOf(i).map(a=>({label:a.platform,url:cleanLink(a.link)})),sell:i.sell,cost:i.cost,profit:(i.sell||0)-(i.cost||0)});
+  if(g.size>1)for(const [p,arr] of g){const s=totals(arr);rows.push({t:"sub",name:`إجمالي الفئة ${p}`,sell:s.sell,cost:s.cost,profit:s.profit});}
   const t=totals(items);rows.push({t:"total",name:"الإجمالي الكلي",sell:t.sell,cost:t.cost,profit:t.profit});
   if(state.budget!=null){const rem=state.budget-t.sell;
     rows.push({t:"sub",name:"ميزانية العميل",sell:state.budget});
@@ -1164,13 +1310,20 @@ async function buildPdf(internal){
       cols.forEach((col,ci)=>{
         c.fillStyle=fill;c.fillRect(col.x0+1,ry,col.px-2,PDF.rowH);
         if(ci>0&&r.t==="item"){c.fillStyle=PDF.teal;c.fillRect(col.x0+1,ry+PDF.rowH-1.2,col.px-2,1.2);}
+        if(col.k==="accs"){if(r.t!=="item")return; // one linked platform name per account, right to left
+          const pad=14,mid=ry+PDF.rowH/2,list=r.accs||[];let x=col.x1-pad;
+          c.font=`400 14.5px ${F}`;c.textAlign="right";
+          if(!list.length){c.fillStyle=PDF.muted;c.fillText("—",x,mid);return;}
+          list.forEach((a,k)=>{const s=(k?"، ":"")+a.label,w=c.measureText(s).width;if(x-w<col.x0+pad)return;
+            c.fillStyle=a.url?PDF.teal:PDF.ink;c.fillText(s,x,mid);
+            if(a.url)(pageRows._links||(pageRows._links=[])).push({x:(x-w)/mm,y:(ry+6)/mm,w:w/mm,h:(PDF.rowH-12)/mm,url:a.url});
+            x-=w;});
+          return;}
         let v=r[col.k];if(v==null||v===""){if(r.t!=="item")return;v="—";}
         if(col.n)v=fmt(v);
         c.fillStyle=color;c.font=`${(col.b||bold)?600:400} 14.5px ${F}`;
         const pad=14,mid=ry+PDF.rowH/2;
-        if(col.a==="start"){c.textAlign="right";const s=fitText(c,v,col.px-2*pad);c.fillText(s,col.x1-pad,mid);
-          if(r.link){const w=c.measureText(s).width;
-            (pageRows._links||(pageRows._links=[])).push({x:(col.x1-pad-w)/mm,y:(ry+6)/mm,w:w/mm,h:(PDF.rowH-12)/mm,url:r.link});}}
+        if(col.a==="start"){c.textAlign="right";c.fillText(fitText(c,v,col.px-2*pad),col.x1-pad,mid);}
         else if(col.a==="end"){c.textAlign="left";c.fillText(fitText(c,v,col.px-2*pad),col.x0+pad,mid);}
         else{c.textAlign="center";c.fillText(fitText(c,v,col.px-2*pad),(col.x0+col.x1)/2,mid);}
       });
@@ -1204,9 +1357,9 @@ $("expClient").addEventListener("click",e=>exportPdf(false,e.currentTarget));
 $("expInternal").addEventListener("click",e=>exportPdf(true,e.currentTarget));
 $("copyTable").addEventListener("click",()=>{
   const items=state.cart,t=totals(items),internal=state.internal;
-  const lines=[["#","المشهور","المنصة","المنطقة","قيمة الإعلان","رابط الحساب"].concat(internal?["التكلفة"]:[]).join("\t")];
-  items.forEach((i,k)=>lines.push([k+1,i.name,i.platform,i.region,i.sell,cleanLink(i.link)].concat(internal?[i.cost]:[]).join("\t")));
-  lines.push(["","الإجمالي","","",t.sell,""].concat(internal?[t.cost]:[]).join("\t"));
+  const lines=[["#","اسم المؤثر","الحسابات","الفئة","المنطقة","قيمة الإعلان"].concat(internal?["التكلفة"]:[]).join("	")];
+  items.forEach((i,k)=>lines.push([k+1,i.name,accountsOf(i).map(a=>cleanLink(a.link)||a.platform).join(" "),i.category||"",i.region,i.sell].concat(internal?[i.cost]:[]).join("	")));
+  lines.push(["","الإجمالي","","","",t.sell].concat(internal?[t.cost]:[]).join("	"));
   const text=lines.join("\n");
   const fallback=()=>{const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
     let ok=false;try{ok=document.execCommand("copy")}catch(e){}ta.remove();toast(ok?"نُسخ الجدول، الصقه في Excel أو البريد الإلكتروني":"النسخ غير متاح هنا");};
@@ -1215,6 +1368,104 @@ $("copyTable").addEventListener("click",()=>{
 
 renderAll();
 initDb();
+})();
+</script>
+
+<script>
+// ---------- login (Supabase Auth). Only emails in app_users can create a password and sign in ----------
+(function(){
+"use strict";
+const SUPA_URL="https://jdsgoerxwecqqoqxvmao.supabase.co", SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impkc2dvZXJ4d2VjcXFvcXh2bWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5NTY2MzgsImV4cCI6MjExMDUzMjYzOH0.1Q19zbz028m8hHyXluZsS1Ixl_3LqqGQj7h3TJPhjEU";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const logo=document.querySelector("#app .brand");if(logo)$("gateBrand").append(...[...logo.querySelectorAll("img")].map(n=>n.cloneNode(true)));
+const show=(el,msg)=>{el.textContent=msg||"";el.hidden=!msg;};
+if(!window.supabase){show($("gErr"),"تعذّر تحميل خدمة الدخول. تأكد من الإنترنت ثم حدّث الصفحة.");$("gGo").disabled=true;return;}
+const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:true,autoRefreshToken:true,storageKey:"inf-auth"}});
+let mode="in",me=null;
+
+function setMode(m){mode=m;const up=m==="up";
+  $("gTitle").textContent=up?"إنشاء كلمة مرور":"تسجيل الدخول";
+  $("gSub").textContent=up?"للمرة الأولى فقط: اكتب البريد الذي أضافه لك المسؤول واختر كلمة مرور.":"سجّل الدخول بالبريد الإلكتروني الذي أضافه لك المسؤول.";
+  $("gPass2Wrap").hidden=!up;$("gPass").autocomplete=up?"new-password":"current-password";
+  $("gGo").textContent=up?"إنشاء الحساب والدخول":"دخول";
+  $("gSwap").textContent=up?"لديّ كلمة مرور، تسجيل الدخول":"أول مرة؟ أنشئ كلمة مرور لحسابك";
+  show($("gErr"));show($("gOk"));}
+$("gSwap").addEventListener("click",()=>setMode(mode==="in"?"up":"in"));
+
+function authErr(e){const m=String(e&&e.message||e||"");
+  if(/Invalid login credentials/i.test(m))return"البريد أو كلمة المرور غير صحيحة. إذا كانت هذه أول مرة، اختر «أنشئ كلمة مرور».";
+  if(/already registered|already exists/i.test(m))return"لهذا البريد كلمة مرور بالفعل. سجّل الدخول، وإذا نسيتها اطلب من المسؤول «إعادة تعيين».";
+  if(/Database error|EMAIL_NOT_ALLOWED/i.test(m))return"هذا البريد ليس ضمن المستخدمين المسموح لهم. اطلب من المسؤول إضافته أولًا.";
+  if(/not confirmed/i.test(m))return"لم يُؤكَّد البريد بعد. افتح رسالة التأكيد في بريدك ثم سجّل الدخول.";
+  if(/at least|weak|short/i.test(m))return"كلمة المرور قصيرة. استخدم 8 أحرف أو أكثر.";
+  if(/rate limit|too many/i.test(m))return"محاولات كثيرة. انتظر دقيقة ثم حاول مجددًا.";
+  if(/fetch|network/i.test(m))return"تعذّر الاتصال بخدمة الدخول. تأكد من الإنترنت.";
+  return"تعذّر الدخول: "+m;}
+
+$("gForm").addEventListener("submit",async e=>{
+  e.preventDefault();show($("gErr"));show($("gOk"));
+  const email=$("gEmail").value.trim().toLowerCase(),pass=$("gPass").value;
+  if(!/^\S+@\S+\.\S+$/.test(email))return show($("gErr"),"اكتب بريدًا إلكترونيًا صحيحًا.");
+  if(pass.length<8)return show($("gErr"),"يجب أن تكون كلمة المرور 8 أحرف أو أكثر.");
+  if(mode==="up"&&pass!==$("gPass2").value)return show($("gErr"),"كلمتا المرور غير متطابقتين.");
+  const go=$("gGo"),label=go.textContent;go.disabled=true;go.textContent="جارٍ الدخول…";
+  try{
+    const r=mode==="up"?await sb.auth.signUp({email,password:pass}):await sb.auth.signInWithPassword({email,password:pass});
+    if(r.error)throw r.error;
+    if(mode==="up"&&!r.data.session){setMode("in");$("gEmail").value=email;show($("gOk"),"أُنشئ الحساب. افتح رسالة التأكيد في بريدك، ثم سجّل الدخول هنا.");}
+  }catch(x){show($("gErr"),authErr(x));}
+  finally{go.disabled=false;go.textContent=label;}
+});
+
+async function enter(session){
+  if(!session){me=null;document.body.classList.add("locked");$("gate").hidden=false;return;}
+  const email=(session.user.email||"").toLowerCase();
+  const {data,error}=await sb.from("app_users").select("email,role").eq("email",email).maybeSingle();
+  if(error||!data){await sb.auth.signOut();show($("gErr"),error?authErr(error):"أُزيل هذا البريد من المستخدمين المسموح لهم.");return;}
+  me=data;$("meEmail").textContent=email;$("meEmail").title=email;
+  $("openUsers").hidden=me.role!=="admin";
+  document.body.classList.remove("locked");$("gate").hidden=true;$("gPass").value="";$("gPass2").value="";
+}
+sb.auth.onAuthStateChange((ev,session)=>{if(ev==="INITIAL_SESSION"||ev==="SIGNED_IN"||ev==="SIGNED_OUT")setTimeout(()=>enter(session),0);});
+$("signOut").addEventListener("click",async()=>{await sb.auth.signOut();openUsers(false);setMode("in");});
+
+// ---------- users panel (admins only; the database enforces it too) ----------
+function openUsers(open){$("usersPanel").hidden=!open;$("openUsers").setAttribute("aria-expanded",open);if(open){loadUsers();$("usersPanel").scrollIntoView({behavior:"smooth",block:"nearest"});}}
+$("openUsers").addEventListener("click",()=>openUsers($("usersPanel").hidden));
+$("closeUsers").addEventListener("click",()=>openUsers(false));
+async function loadUsers(){
+  const {data,error}=await sb.from("app_users").select("email,role,added_at").order("added_at");
+  if(error)return show($("uErr"),"تعذّر تحميل المستخدمين: "+error.message);
+  show($("uErr"));
+  $("uList").innerHTML=data.map(u=>{const self=me&&u.email===me.email;
+    return `<div class="urow" data-email="${esc(u.email)}"><span class="em" title="${esc(u.email)}">${esc(u.email)}</span>
+      <span class="role${u.role==="admin"?" admin":""}">${u.role==="admin"?"مسؤول":"عضو"}</span>
+      <button class="btn sm ghost" data-act="reset"${self?" disabled":""}>إعادة تعيين</button>
+      <button class="btn sm ghost danger" data-act="del"${self?" disabled title=\"لا يمكنك حذف نفسك\"":""}>حذف</button></div>`;}).join("");
+}
+$("uForm").addEventListener("submit",async e=>{
+  e.preventDefault();const email=$("uEmail").value.trim().toLowerCase(),role=$("uRole").value;
+  if(!/^\S+@\S+\.\S+$/.test(email))return show($("uErr"),"اكتب بريدًا إلكترونيًا صحيحًا.");
+  const b=$("uAdd");b.disabled=true;
+  const {error}=await sb.from("app_users").insert({email,role,added_by:me&&me.email});
+  b.disabled=false;
+  if(error)return show($("uErr"),/duplicate|unique/i.test(error.message)?"هذا البريد مضاف بالفعل.":"تعذّرت الإضافة: "+error.message);
+  $("uEmail").value="";loadUsers();
+});
+function armed(btn,label,armedLabel){
+  if(btn.dataset.armed&&Date.now()-btn.dataset.armed<3000){delete btn.dataset.armed;btn.textContent=label;return true;}
+  btn.dataset.armed=Date.now();btn.textContent=armedLabel;setTimeout(()=>{if(btn.dataset.armed){delete btn.dataset.armed;btn.textContent=label;}},3000);return false;}
+$("uList").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;const email=b.closest(".urow").dataset.email;
+  if(b.dataset.act==="del"){if(!armed(b,"حذف","هل أنت متأكد؟ اضغط مجددًا"))return;
+    const {error}=await sb.from("app_users").delete().eq("email",email);
+    if(error)return show($("uErr"),"تعذّر الحذف: "+error.message);loadUsers();}
+  else if(b.dataset.act==="reset"){if(!armed(b,"إعادة تعيين","اضغط مجددًا للتأكيد"))return;
+    const {error}=await sb.rpc("admin_reset_login",{target:email});
+    if(error)return show($("uErr"),"تعذّرت إعادة التعيين: "+error.message);
+    show($("uErr"));b.textContent="تم، يمكنه إنشاء كلمة مرور جديدة";setTimeout(loadUsers,2500);}
+});
 })();
 </script>
 
