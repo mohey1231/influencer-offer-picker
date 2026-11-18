@@ -1084,7 +1084,7 @@ $("drawer").addEventListener("click",e=>{
 $("cartBar").addEventListener("click",()=>$("cart").classList.add("open"));
 $("closeCart").addEventListener("click",()=>$("cart").classList.remove("open"));
 
-// ---------- campaigns store: shared db on claude.ai, this browser otherwise ----------
+// ---------- campaigns store: the team database once signed in (Supabase), this browser otherwise ----------
 const LOCAL_CAMPS="inf-camps";
 function loadLocalCamps(){const all=store.get(LOCAL_CAMPS)||{};state.camps=Object.entries(all).map(([id,v])=>Object.assign({id},v));}
 const campStore={
@@ -1100,7 +1100,7 @@ const campStore={
   }
 };
 function saveErr(e){const c=e&&e.code;
-  return c==="quota_exceeded"?"امتلأت المساحة المتاحة للحملات. احذف حملات قديمة ثم حاول مجددًا.":
+  return c==="42501"?"لا تملك صلاحية الحفظ. سجّل الخروج ثم الدخول مجددًا.":c==="quota_exceeded"?"امتلأت المساحة المتاحة للحملات. احذف حملات قديمة ثم حاول مجددًا.":
     c==="invalid_argument"?"لا تملك صلاحية تعديل الحملات في هذه الصفحة. اطلب صلاحية Contributor أو أعلى.":"تعذّر الحفظ. حاول مجددًا بعد قليل.";}
 function campBody(){
   const items=state.cart.map(i=>({...i})),t=totals(items);
@@ -1157,21 +1157,35 @@ async function writeLibrary(items){
   for(let k=n;k<old;k++){try{await db.doc("library/c"+k).delete();}catch(e){}}
   return true;
 }
-async function initDb(){
-  let db=null;
-  try{db=window.claude&&window.claude.use?await window.claude.use("db"):null;}catch(e){db=null;}
+// campaigns and a sheet saved in this browser before the team database existed are copied up once
+async function moveLocalCamps(){
+  const local=store.get(LOCAL_CAMPS);if(!local||!Object.keys(local).length)return;
+  const have=new Set(state.camps.map(c=>c.id));let n=0;
+  try{for(const [id,body] of Object.entries(local))if(!have.has(id)){await state.db.collection("campaigns").doc(id).set(body);n++;}}
+  catch(e){toast("تعذّر نقل الحملات المحفوظة على هذا المتصفح. حدّث الصفحة لإعادة المحاولة.");return;}
+  store.set(LOCAL_CAMPS+"-moved",local);store.del(LOCAL_CAMPS);
+  if(n)toast(`نُقلت ${fmt(n)} حملة من هذا المتصفح إلى قاعدة بيانات الفريق`);
+}
+async function moveLocalLibrary(){
+  if(libMeta||state.libSource!=="local")return;
+  try{if(await writeLibrary(state.lib)){state.libSource="db";renderAll();toast("نُقل شيت المؤثرين من هذا المتصفح إلى قاعدة بيانات الفريق");}}catch(e){}
+}
+async function initDb(db){
+  if(!db)try{db=window.claude&&window.claude.use?await window.claude.use("db"):null;}catch(e){db=null;}
   if(!db){state.dbState="local";loadLocalCamps();renderAll();return;}
-  state.db=db;
+  state.db=db;let firstCamps=true,firstLib=true;
   const slow=setTimeout(()=>{if(state.dbState==="loading"){state.dbState="slow";renderCamps();}},10000);
   db.collection("campaigns").onSnapshot(snap=>{
     if(!snap.metadata.fromCache)clearTimeout(slow);
     state.dbState="ok";state.camps=snap.docs.map(d=>Object.assign({id:d.id},d.data()));
     renderList();renderCamps();renderCart();renderProfile();
+    if(firstCamps){firstCamps=false;moveLocalCamps();}
   },err=>{clearTimeout(slow);state.dbState="error";renderCamps();});
   db.collection("library").onSnapshot(snap=>{
     libChunks=new Map();libMeta=null;
     for(const d of snap.docs){const v=d.data();if(d.id==="meta")libMeta=v;else libChunks.set(d.id,v);}
     assembleLibrary();
+    if(firstLib){firstLib=false;moveLocalLibrary();}
   },()=>{});
   db.doc("settings/main").onSnapshot(s=>{
     if(s.exists){const m=+s.data().margin;if(isFinite(m)&&m!==state.margin){state.margin=m;state.lib.forEach(derive);saveSettings();renderAll();}}
@@ -1378,7 +1392,8 @@ $("copyTable").addEventListener("click",()=>{
 });
 
 renderAll();
-initDb();
+// the login script connects the team database after sign-in; without it (e.g. inside claude.ai) fall back as before
+if(window.supabase)window.__infConnect=initDb;else initDb();
 })();
 </script>
 
@@ -1397,7 +1412,30 @@ const logo=document.querySelector("#app .brand");if(logo)$("gateBrand").append(.
 const show=(el,msg)=>{el.textContent=msg||"";el.hidden=!msg;};
 if(!window.supabase){show($("gErr"),"تعذّر تحميل خدمة الدخول. تأكد من الإنترنت ثم حدّث الصفحة.");$("gGo").disabled=true;return;}
 const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:true,autoRefreshToken:true,storageKey:"inf-auth"}});
-let setup=false,me=null;
+let setup=false,me=null,connected=false;
+
+// ---------- team database: the page's collection/doc store backed by the Supabase "docs" table ----------
+function teamDb(){
+  const subs=new Map(),timers=new Map();
+  async function emit(col){const set=subs.get(col);if(!set||!set.size)return;
+    const {data,error}=await sb.from("docs").select("id,data").eq("collection",col);
+    if(error){set.forEach(x=>x.err&&x.err(error));return;}
+    const snap={metadata:{fromCache:false},docs:data.map(r=>({id:r.id,data:()=>r.data}))};
+    set.forEach(x=>x.ok(snap));}
+  const soon=col=>{clearTimeout(timers.get(col));timers.set(col,setTimeout(()=>emit(col),150));};
+  const newId=()=>"c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const ref=(col,id)=>({id,
+    async set(data){const {error}=await sb.from("docs").upsert({collection:col,id,data,updated_at:new Date().toISOString(),updated_by:me&&me.username});if(error)throw error;soon(col);},
+    async delete(){const {error}=await sb.from("docs").delete().eq("collection",col).eq("id",id);if(error)throw error;soon(col);},
+    onSnapshot(ok,err){return coll(col).onSnapshot(snap=>{const d=snap.docs.find(x=>x.id===id);ok({exists:!!d,data:()=>d&&d.data()});},err);}});
+  const coll=col=>({doc:id=>ref(col,id||newId()),
+    onSnapshot(ok,err){if(!subs.has(col))subs.set(col,new Set());const x={ok,err};subs.get(col).add(x);emit(col);return()=>subs.get(col).delete(x);}});
+  // someone else saved → refetch that collection; also catch up when the tab comes back
+  sb.channel("docs-live").on("postgres_changes",{event:"*",schema:"public",table:"docs"},
+    p=>{const c=(p.new&&p.new.collection)||(p.old&&p.old.collection);if(c)soon(c);else subs.forEach((_,k)=>soon(k));}).subscribe();
+  window.addEventListener("focus",()=>subs.forEach((_,k)=>soon(k)));
+  return {collection:coll,doc:path=>{const [c,i]=path.split("/");return ref(c,i);}};
+}
 
 function authErr(e){const m=String(e&&e.message||e||"");
   if(/Invalid login credentials/i.test(m))return"اسم المستخدم أو كلمة المرور غير صحيحة.";
@@ -1442,9 +1480,10 @@ async function enter(session){
   me=data;$("meName").textContent=me.username;$("meName").title=me.role==="admin"?"مسؤول":"عضو";
   $("openUsers").hidden=me.role!=="admin";
   document.body.classList.remove("locked");$("gate").hidden=true;$("gPass").value="";$("gPass2").value="";show($("gErr"));
+  if(!connected&&window.__infConnect){connected=true;window.__infConnect(teamDb());}
 }
 sb.auth.onAuthStateChange((ev,session)=>{if(ev==="INITIAL_SESSION"||ev==="SIGNED_IN"||ev==="SIGNED_OUT")setTimeout(()=>enter(session),0);});
-$("signOut").addEventListener("click",async()=>{await sb.auth.signOut();openUsers(false);});
+$("signOut").addEventListener("click",async()=>{await sb.auth.signOut();location.reload();}); // reload drops the team data from memory
 
 // ---------- users panel (admins only; the database enforces it too) ----------
 function genPass(){const a="abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789",r=new Uint32Array(10);crypto.getRandomValues(r);return[...r].map(x=>a[x%a.length]).join("");}
