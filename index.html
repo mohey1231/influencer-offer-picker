@@ -540,7 +540,7 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
             <div class="chips" id="platChips" role="group" aria-label="المنصة"></div>
             <div class="frow">
               <div class="price"><span>السعر من</span><input class="inp num" id="pmin" inputmode="numeric" placeholder="0"><span>إلى</span><input class="inp num" id="pmax" inputmode="numeric" placeholder="∞"></div>
-              <label class="switch"><input type="checkbox" id="fit"> ضمن المتبقي فقط</label>
+              <label class="switch" title="يُظهر فقط المؤثرين الذين سعرهم لا يتجاوز المتبقي من ميزانية الحملة"><input type="checkbox" id="fit" checked> ضمن الميزانية المتبقية فقط</label>
             </div>
           </div>
         </div>
@@ -724,7 +724,7 @@ function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth
 const blankOpen=()=>({id:null,name:"",client:"",status:"draft",savedSig:null});
 const state={lib:[],libSource:"sample",cart:[],open:blankOpen(),budget:null,
   internal:true,margin:20,shown:PAGE,view:"home",camps:[],db:null,dbState:"loading",profile:null,cf:{q:"",status:"all"},
-  f:{q:"",platform:"all",region:"all",cat:"all",min:null,max:null,sort:"price-desc",fit:false}};
+  f:{q:"",platform:"all",region:"all",cat:"all",min:null,max:null,sort:"price-desc",fit:true}}; // fit: hide anyone priced above what is left of the budget
 
 // one item = one person; a person can hold several accounts (snap / tiktok / insta …)
 function mkItem(o){
@@ -824,11 +824,14 @@ function renderList(){
   const rows=filtered(),inCart=inCartSet(),rc=regionColor(),mem=membership();
   const rem=state.budget!=null?state.budget-totals(state.cart).sell:null;
   const notIn=rows.filter(i=>!inCart.has(i.id)).length;
-  $("count").innerHTML=`<b class="num">${fmt(rows.length)}</b> مؤثر من <span class="num">${fmt(state.lib.length)}</span>`;
+  const byBudget=state.f.fit&&rem!=null;
+  $("count").innerHTML=`<b class="num">${fmt(rows.length)}</b> مؤثر من <span class="num">${fmt(state.lib.length)}</span>`+
+    (byBudget?` · سعرهم ضمن المتبقي <b class="num">${fmt(Math.max(0,rem))}</b> ر.س`:"");
   $("addAll").textContent=notIn?`أضف كل النتائج (${fmt(notIn)})`:"أُضيفت كل النتائج";
   $("addAll").disabled=!notIn;
   const head=`<div class="row head"><span></span><span>اسم المؤثر</span><span>الحسابات</span><span>الفئة</span><span>المنطقة</span><span class="end internal">التكلفة</span><span class="end">سعر البيع</span></div>`;
-  if(!rows.length){$("list").innerHTML=head+`<div class="empty">لا يوجد مؤثرون مطابقون لهذه الفلاتر. وسّع نطاق السعر أو امسح الفلاتر.</div>`;return;}
+  if(!rows.length){$("list").innerHTML=head+`<div class="empty">${byBudget&&rem<=0?"اكتملت ميزانية الحملة. لعرض باقي المؤثرين أوقف «ضمن الميزانية المتبقية فقط».":
+    byBudget?"لا يوجد مؤثرون سعرهم ضمن المتبقي من الميزانية بهذه الفلاتر. وسّع الفلاتر أو أوقف «ضمن الميزانية المتبقية فقط».":"لا يوجد مؤثرون مطابقون لهذه الفلاتر. وسّع نطاق السعر أو امسح الفلاتر."}</div>`;return;}
   const vis=rows.slice(0,state.shown);
   $("list").innerHTML=head+vis.map(i=>{
     const sel=inCart.has(i.id),over=!sel&&rem!=null&&i.sell>rem;
@@ -1061,8 +1064,8 @@ $("pmin").addEventListener("input",e=>{state.f.min=parseNum(e.target.value);stat
 $("pmax").addEventListener("input",e=>{state.f.max=parseNum(e.target.value);state.shown=PAGE;renderList();});
 $("fit").addEventListener("change",e=>{state.f.fit=e.target.checked;renderList();});
 $("platChips").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;state.f.platform=c.dataset.p;state.shown=PAGE;renderFilters();renderList();});
-$("clearFilters").addEventListener("click",()=>{state.f={q:"",platform:"all",region:"all",cat:"all",min:null,max:null,sort:state.f.sort,fit:false};
-  $("q").value="";$("pmin").value="";$("pmax").value="";$("fit").checked=false;renderFilters();renderList();});
+$("clearFilters").addEventListener("click",()=>{state.f={q:"",platform:"all",region:"all",cat:"all",min:null,max:null,sort:state.f.sort,fit:true};
+  $("q").value="";$("pmin").value="";$("pmax").value="";$("fit").checked=true;renderFilters();renderList();});
 $("internal").addEventListener("change",e=>{state.internal=e.target.checked;saveSettings();renderAll();});
 
 // ---------- profile drawer events ----------
