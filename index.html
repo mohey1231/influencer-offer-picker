@@ -378,7 +378,14 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
 .urow .em{direction:ltr;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 .urow .role{font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--sunken);color:var(--muted)}
 .urow .role.admin{background:var(--accent-soft);color:var(--accent)}
-.uform{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:10px;align-items:end}
+.urow .pw{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.urow .pw .inp{flex:1 1 180px}
+.uform{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 170px auto;gap:10px;align-items:end}
+.pwbox{position:relative}
+.pwbox .inp{width:100%;padding-left:64px}
+.pwbox .gen{position:absolute;left:4px;top:50%;transform:translateY(-50%);border:0;background:var(--sunken);color:var(--ink);font-size:12px;font-weight:600;border-radius:999px;padding:4px 10px;cursor:pointer}
+.made{background:var(--accent-soft);border-radius:12px;padding:10px 14px;font-size:14px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.made code{direction:ltr;unicode-bidi:isolate;font-family:ui-monospace,Consolas,monospace;font-weight:700;background:var(--surface);padding:1px 8px;border-radius:6px}
 @media (max-width:680px){.uform{grid-template-columns:1fr}.urow{grid-template-columns:minmax(0,1fr) auto;row-gap:6px}}
 </style>
 
@@ -387,16 +394,15 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
   <div class="gate-card">
     <div class="brand" id="gateBrand"></div>
     <h2 id="gTitle">تسجيل الدخول</h2>
-    <p class="sub2" id="gSub">سجّل الدخول بالبريد الإلكتروني الذي أضافه لك المسؤول.</p>
+    <p class="sub2" id="gSub">ادخل باسم المستخدم وكلمة المرور اللذين أعطاهما لك المسؤول.</p>
     <form id="gForm" novalidate>
-      <label class="fld">البريد الإلكتروني<input class="inp" id="gEmail" type="email" dir="ltr" autocomplete="username" required></label>
+      <label class="fld">اسم المستخدم<input class="inp" id="gUser" dir="ltr" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
       <label class="fld">كلمة المرور<input class="inp" id="gPass" type="password" dir="ltr" autocomplete="current-password" required></label>
       <label class="fld" id="gPass2Wrap" hidden>تأكيد كلمة المرور<input class="inp" id="gPass2" type="password" dir="ltr" autocomplete="new-password"></label>
       <button class="btn primary" id="gGo" type="submit">دخول</button>
       <p class="err" id="gErr" hidden></p>
       <p class="ok" id="gOk" hidden></p>
     </form>
-    <button class="swap" id="gSwap" type="button">أول مرة؟ أنشئ كلمة مرور لحسابك</button>
   </div>
 </div>
 
@@ -413,7 +419,7 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
       <label class="switch" title="أوقفه عند مشاركة الشاشة مع العميل لإخفاء التكلفة والربح">
         <input type="checkbox" id="internal" checked> عرض التكلفة والربح
       </label>
-      <span class="who-me" id="meEmail"></span>
+      <span class="who-me" id="meName"></span>
       <button class="btn" id="openUsers" aria-expanded="false" aria-controls="usersPanel" hidden>
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.8c1.7.8 2.7 2.5 3 5.2"/></svg>
         المستخدمون
@@ -460,15 +466,17 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
   </section>
 
   <section class="panel" id="usersPanel" hidden>
-    <h2>المستخدمون المسموح لهم بالدخول</h2>
-    <form class="uform" id="uForm" novalidate>
-      <label class="fld">البريد الإلكتروني<input class="inp" id="uEmail" type="email" dir="ltr" placeholder="name@company.com" autocomplete="off"></label>
-      <label class="fld">الصلاحية<select class="sel" id="uRole"><option value="member">عضو</option><option value="admin">مسؤول (يضيف ويحذف المستخدمين)</option></select></label>
-      <button class="btn primary" id="uAdd" type="submit">إضافة</button>
+    <h2>المستخدمون</h2>
+    <form class="uform" id="uForm" novalidate autocomplete="off">
+      <label class="fld">اسم المستخدم<input class="inp" id="uName" dir="ltr" placeholder="ahmed" autocapitalize="none" spellcheck="false" autocomplete="off"></label>
+      <label class="fld">كلمة المرور<span class="pwbox"><input class="inp" id="uPass" dir="ltr" autocomplete="new-password"><button class="gen" type="button" id="uGen">توليد</button></span></label>
+      <label class="fld">الصلاحية<select class="sel" id="uRole"><option value="member">عضو</option><option value="admin">مسؤول (يدير المستخدمين)</option></select></label>
+      <button class="btn primary" id="uAdd" type="submit">إضافة مستخدم</button>
     </form>
     <p class="err" id="uErr" hidden></p>
+    <div class="made" id="uMade" hidden></div>
     <div class="ulist" id="uList"></div>
-    <p class="hint">بعد الإضافة، يفتح الشخص الصفحة ويختار «أول مرة؟ أنشئ كلمة مرور» بنفس البريد. وإذا نسي كلمة المرور اضغط «إعادة تعيين» بجانب بريده ليُنشئ كلمة مرور جديدة.</p>
+    <p class="hint">اسم المستخدم بالإنجليزي الصغير أو الأرقام أو . - _ (من 3 إلى 30 حرفًا). كلمة المرور 8 أحرف أو أكثر. أعطِ الشخص اسم المستخدم وكلمة المرور، ويقدر المسؤول يغيّر كلمة مرور أي مستخدم من هنا.</p>
     <div class="frow"><button class="btn ghost" id="closeUsers">إغلاق</button></div>
   </section>
 
@@ -1372,99 +1380,124 @@ initDb();
 </script>
 
 <script>
-// ---------- login (Supabase Auth). Only emails in app_users can create a password and sign in ----------
+// ---------- login (Supabase Auth): username + password, users are created by an admin inside the page ----------
+// Supabase Auth needs an email, so each username maps to an internal address that is never mailed.
 (function(){
 "use strict";
-const SUPA_URL="https://jdsgoerxwecqqoqxvmao.supabase.co", SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impkc2dvZXJ4d2VjcXFvcXh2bWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5NTY2MzgsImV4cCI6MjExMDUzMjYzOH0.1Q19zbz028m8hHyXluZsS1Ixl_3LqqGQj7h3TJPhjEU";
+const SUPA_URL="https://jdsgoerxwecqqoqxvmao.supabase.co", SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impkc2dvZXJ4d2VjcXFvcXh2bWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5NTY2MzgsImV4cCI6MjExMDUzMjYzOH0.1Q19zbz028m8hHyXluZsS1Ixl_3LqqGQj7h3TJPhjEU", DOMAIN="users.picker.local";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const USER_RE=/^[a-z0-9][a-z0-9._-]{2,29}$/;
+const normUser=u=>String(u||"").trim().toLowerCase();
+const toEmail=u=>normUser(u)+"@"+DOMAIN;
 const logo=document.querySelector("#app .brand");if(logo)$("gateBrand").append(...[...logo.querySelectorAll("img")].map(n=>n.cloneNode(true)));
 const show=(el,msg)=>{el.textContent=msg||"";el.hidden=!msg;};
 if(!window.supabase){show($("gErr"),"تعذّر تحميل خدمة الدخول. تأكد من الإنترنت ثم حدّث الصفحة.");$("gGo").disabled=true;return;}
 const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:true,autoRefreshToken:true,storageKey:"inf-auth"}});
-let mode="in",me=null;
-
-function setMode(m){mode=m;const up=m==="up";
-  $("gTitle").textContent=up?"إنشاء كلمة مرور":"تسجيل الدخول";
-  $("gSub").textContent=up?"للمرة الأولى فقط: اكتب البريد الذي أضافه لك المسؤول واختر كلمة مرور.":"سجّل الدخول بالبريد الإلكتروني الذي أضافه لك المسؤول.";
-  $("gPass2Wrap").hidden=!up;$("gPass").autocomplete=up?"new-password":"current-password";
-  $("gGo").textContent=up?"إنشاء الحساب والدخول":"دخول";
-  $("gSwap").textContent=up?"لديّ كلمة مرور، تسجيل الدخول":"أول مرة؟ أنشئ كلمة مرور لحسابك";
-  show($("gErr"));show($("gOk"));}
-$("gSwap").addEventListener("click",()=>setMode(mode==="in"?"up":"in"));
+let setup=false,me=null;
 
 function authErr(e){const m=String(e&&e.message||e||"");
-  if(/Invalid login credentials/i.test(m))return"البريد أو كلمة المرور غير صحيحة. إذا كانت هذه أول مرة، اختر «أنشئ كلمة مرور».";
-  if(/already registered|already exists/i.test(m))return"لهذا البريد كلمة مرور بالفعل. سجّل الدخول، وإذا نسيتها اطلب من المسؤول «إعادة تعيين».";
-  if(/Database error|EMAIL_NOT_ALLOWED/i.test(m))return"هذا البريد ليس ضمن المستخدمين المسموح لهم. اطلب من المسؤول إضافته أولًا.";
-  if(/not confirmed/i.test(m))return"لم يُؤكَّد البريد بعد. افتح رسالة التأكيد في بريدك ثم سجّل الدخول.";
-  if(/at least|weak|short/i.test(m))return"كلمة المرور قصيرة. استخدم 8 أحرف أو أكثر.";
+  if(/Invalid login credentials/i.test(m))return"اسم المستخدم أو كلمة المرور غير صحيحة.";
+  if(/already registered|already exists/i.test(m))return"لهذا المستخدم كلمة مرور بالفعل.";
+  if(/Database error|USER_NOT_ALLOWED/i.test(m))return"اسم المستخدم غير مسجّل.";
+  if(/at least|weak|short|PASSWORD_TOO_SHORT/i.test(m))return"كلمة المرور قصيرة. استخدم 8 أحرف أو أكثر.";
   if(/rate limit|too many/i.test(m))return"محاولات كثيرة. انتظر دقيقة ثم حاول مجددًا.";
   if(/fetch|network/i.test(m))return"تعذّر الاتصال بخدمة الدخول. تأكد من الإنترنت.";
-  return"تعذّر الدخول: "+m;}
+  return"حدث خطأ: "+m;}
+
+// one-time setup: until the first admin has a password, the form sets it instead of signing in
+async function checkSetup(){
+  try{const {data}=await sb.rpc("needs_setup");setup=data===true;}catch(e){setup=false;}
+  $("gTitle").textContent=setup?"إعداد حساب المسؤول":"تسجيل الدخول";
+  $("gSub").textContent=setup?"للمرة الأولى فقط: اسم المستخدم admin، اختر له كلمة مرور.":"ادخل باسم المستخدم وكلمة المرور اللذين أعطاهما لك المسؤول.";
+  $("gPass2Wrap").hidden=!setup;$("gPass").autocomplete=setup?"new-password":"current-password";
+  $("gGo").textContent=setup?"حفظ كلمة المرور والدخول":"دخول";
+  if(setup&&!$("gUser").value)$("gUser").value="admin";
+}
 
 $("gForm").addEventListener("submit",async e=>{
   e.preventDefault();show($("gErr"));show($("gOk"));
-  const email=$("gEmail").value.trim().toLowerCase(),pass=$("gPass").value;
-  if(!/^\S+@\S+\.\S+$/.test(email))return show($("gErr"),"اكتب بريدًا إلكترونيًا صحيحًا.");
-  if(pass.length<8)return show($("gErr"),"يجب أن تكون كلمة المرور 8 أحرف أو أكثر.");
-  if(mode==="up"&&pass!==$("gPass2").value)return show($("gErr"),"كلمتا المرور غير متطابقتين.");
+  const user=normUser($("gUser").value),pass=$("gPass").value;
+  if(!USER_RE.test(user))return show($("gErr"),"اكتب اسم المستخدم صحيحًا.");
+  if(!pass)return show($("gErr"),"اكتب كلمة المرور.");
+  if(setup&&pass.length<8)return show($("gErr"),"يجب أن تكون كلمة المرور 8 أحرف أو أكثر.");
+  if(setup&&pass!==$("gPass2").value)return show($("gErr"),"كلمتا المرور غير متطابقتين.");
   const go=$("gGo"),label=go.textContent;go.disabled=true;go.textContent="جارٍ الدخول…";
   try{
-    const r=mode==="up"?await sb.auth.signUp({email,password:pass}):await sb.auth.signInWithPassword({email,password:pass});
-    if(r.error)throw r.error;
-    if(mode==="up"&&!r.data.session){setMode("in");$("gEmail").value=email;show($("gOk"),"أُنشئ الحساب. افتح رسالة التأكيد في بريدك، ثم سجّل الدخول هنا.");}
+    if(setup){const r=await sb.auth.signUp({email:toEmail(user),password:pass});if(r.error)throw r.error;
+      if(!r.data.session){const r2=await sb.auth.signInWithPassword({email:toEmail(user),password:pass});if(r2.error)throw r2.error;}}
+    else{const r=await sb.auth.signInWithPassword({email:toEmail(user),password:pass});if(r.error)throw r.error;}
   }catch(x){show($("gErr"),authErr(x));}
   finally{go.disabled=false;go.textContent=label;}
 });
 
 async function enter(session){
-  if(!session){me=null;document.body.classList.add("locked");$("gate").hidden=false;return;}
+  if(!session){me=null;document.body.classList.add("locked");$("gate").hidden=false;checkSetup();return;}
   const email=(session.user.email||"").toLowerCase();
-  const {data,error}=await sb.from("app_users").select("email,role").eq("email",email).maybeSingle();
-  if(error||!data){await sb.auth.signOut();show($("gErr"),error?authErr(error):"أُزيل هذا البريد من المستخدمين المسموح لهم.");return;}
-  me=data;$("meEmail").textContent=email;$("meEmail").title=email;
+  const {data,error}=await sb.from("app_users").select("username,role").eq("email",email).maybeSingle();
+  if(error||!data){await sb.auth.signOut();show($("gErr"),error?authErr(error):"لم يعد هذا المستخدم مسموحًا له بالدخول.");return;}
+  me=data;$("meName").textContent=me.username;$("meName").title=me.role==="admin"?"مسؤول":"عضو";
   $("openUsers").hidden=me.role!=="admin";
-  document.body.classList.remove("locked");$("gate").hidden=true;$("gPass").value="";$("gPass2").value="";
+  document.body.classList.remove("locked");$("gate").hidden=true;$("gPass").value="";$("gPass2").value="";show($("gErr"));
 }
 sb.auth.onAuthStateChange((ev,session)=>{if(ev==="INITIAL_SESSION"||ev==="SIGNED_IN"||ev==="SIGNED_OUT")setTimeout(()=>enter(session),0);});
-$("signOut").addEventListener("click",async()=>{await sb.auth.signOut();openUsers(false);setMode("in");});
+$("signOut").addEventListener("click",async()=>{await sb.auth.signOut();openUsers(false);});
 
 // ---------- users panel (admins only; the database enforces it too) ----------
-function openUsers(open){$("usersPanel").hidden=!open;$("openUsers").setAttribute("aria-expanded",open);if(open){loadUsers();$("usersPanel").scrollIntoView({behavior:"smooth",block:"nearest"});}}
+function genPass(){const a="abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789",r=new Uint32Array(10);crypto.getRandomValues(r);return[...r].map(x=>a[x%a.length]).join("");}
+function openUsers(open){$("usersPanel").hidden=!open;$("openUsers").setAttribute("aria-expanded",open);
+  if(open){loadUsers();show($("uMade"));if(!$("uPass").value)$("uPass").value=genPass();$("usersPanel").scrollIntoView({behavior:"smooth",block:"nearest"});}}
 $("openUsers").addEventListener("click",()=>openUsers($("usersPanel").hidden));
 $("closeUsers").addEventListener("click",()=>openUsers(false));
+$("uGen").addEventListener("click",()=>{$("uPass").value=genPass();});
 async function loadUsers(){
-  const {data,error}=await sb.from("app_users").select("email,role,added_at").order("added_at");
+  const {data,error}=await sb.from("app_users").select("username,role,added_at").order("added_at");
   if(error)return show($("uErr"),"تعذّر تحميل المستخدمين: "+error.message);
   show($("uErr"));
-  $("uList").innerHTML=data.map(u=>{const self=me&&u.email===me.email;
-    return `<div class="urow" data-email="${esc(u.email)}"><span class="em" title="${esc(u.email)}">${esc(u.email)}</span>
+  $("uList").innerHTML=data.map(u=>{const self=me&&u.username===me.username;
+    return `<div class="urow" data-user="${esc(u.username)}"><span class="em">${esc(u.username)}${self?' <small style="color:var(--muted);font-weight:500">(أنت)</small>':""}</span>
       <span class="role${u.role==="admin"?" admin":""}">${u.role==="admin"?"مسؤول":"عضو"}</span>
-      <button class="btn sm ghost" data-act="reset"${self?" disabled":""}>إعادة تعيين</button>
+      <button class="btn sm ghost" data-act="pw">تغيير كلمة المرور</button>
       <button class="btn sm ghost danger" data-act="del"${self?" disabled title=\"لا يمكنك حذف نفسك\"":""}>حذف</button></div>`;}).join("");
 }
+// a throwaway client creates the new login, so the admin stays signed in
+const maker=()=>window.supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:false,autoRefreshToken:false,storageKey:"inf-auth-maker"}});
 $("uForm").addEventListener("submit",async e=>{
-  e.preventDefault();const email=$("uEmail").value.trim().toLowerCase(),role=$("uRole").value;
-  if(!/^\S+@\S+\.\S+$/.test(email))return show($("uErr"),"اكتب بريدًا إلكترونيًا صحيحًا.");
-  const b=$("uAdd");b.disabled=true;
-  const {error}=await sb.from("app_users").insert({email,role,added_by:me&&me.email});
-  b.disabled=false;
-  if(error)return show($("uErr"),/duplicate|unique/i.test(error.message)?"هذا البريد مضاف بالفعل.":"تعذّرت الإضافة: "+error.message);
-  $("uEmail").value="";loadUsers();
+  e.preventDefault();show($("uErr"));show($("uMade"));
+  const user=normUser($("uName").value),pass=$("uPass").value,role=$("uRole").value;
+  if(!USER_RE.test(user))return show($("uErr"),"اسم المستخدم من 3 إلى 30 حرفًا: أحرف إنجليزية صغيرة أو أرقام أو . - _ ويبدأ بحرف أو رقم.");
+  if(pass.length<8)return show($("uErr"),"يجب أن تكون كلمة المرور 8 أحرف أو أكثر.");
+  const b=$("uAdd");b.disabled=true;b.textContent="جارٍ الإضافة…";
+  try{
+    const ins=await sb.from("app_users").insert({username:user,role,added_by:me&&me.username});
+    if(ins.error)throw /duplicate|unique/i.test(ins.error.message)?new Error("اسم المستخدم هذا موجود بالفعل."):ins.error;
+    const r=await maker().auth.signUp({email:toEmail(user),password:pass});
+    if(r.error){await sb.from("app_users").delete().eq("username",user);throw r.error;}
+    $("uMade").innerHTML=`أُنشئ المستخدم. أعطه هذه البيانات: <span>اسم المستخدم <code>${esc(user)}</code></span><span>كلمة المرور <code>${esc(pass)}</code></span>`;$("uMade").hidden=false;
+    $("uName").value="";$("uPass").value=genPass();$("uRole").value="member";loadUsers();
+  }catch(x){show($("uErr"),/^[؀-ۿ]/.test(x.message||"")?x.message:"تعذّرت الإضافة: "+authErr(x));}
+  finally{b.disabled=false;b.textContent="إضافة مستخدم";}
 });
 function armed(btn,label,armedLabel){
   if(btn.dataset.armed&&Date.now()-btn.dataset.armed<3000){delete btn.dataset.armed;btn.textContent=label;return true;}
   btn.dataset.armed=Date.now();btn.textContent=armedLabel;setTimeout(()=>{if(btn.dataset.armed){delete btn.dataset.armed;btn.textContent=label;}},3000);return false;}
 $("uList").addEventListener("click",async e=>{
-  const b=e.target.closest("[data-act]");if(!b)return;const email=b.closest(".urow").dataset.email;
-  if(b.dataset.act==="del"){if(!armed(b,"حذف","هل أنت متأكد؟ اضغط مجددًا"))return;
-    const {error}=await sb.from("app_users").delete().eq("email",email);
-    if(error)return show($("uErr"),"تعذّر الحذف: "+error.message);loadUsers();}
-  else if(b.dataset.act==="reset"){if(!armed(b,"إعادة تعيين","اضغط مجددًا للتأكيد"))return;
-    const {error}=await sb.rpc("admin_reset_login",{target:email});
-    if(error)return show($("uErr"),"تعذّرت إعادة التعيين: "+error.message);
-    show($("uErr"));b.textContent="تم، يمكنه إنشاء كلمة مرور جديدة";setTimeout(loadUsers,2500);}
+  const b=e.target.closest("[data-act]");if(!b)return;const row=b.closest(".urow"),user=row.dataset.user;
+  if(b.dataset.act==="del"){if(!armed(b,"حذف","متأكد؟ اضغط مجددًا"))return;
+    const {error}=await sb.from("app_users").delete().eq("username",user);
+    if(error)return show($("uErr"),"تعذّر الحذف: "+error.message);show($("uMade"));loadUsers();}
+  else if(b.dataset.act==="pw"){
+    const open=row.querySelector(".pw");if(open){open.remove();return;}
+    row.insertAdjacentHTML("beforeend",`<div class="pw"><input class="inp" dir="ltr" value="${genPass()}" aria-label="كلمة المرور الجديدة لـ ${esc(user)}"><button class="btn sm primary" data-act="pwsave">حفظ</button><button class="btn sm ghost" data-act="pw">إلغاء</button></div>`);}
+  else if(b.dataset.act==="pwsave"){
+    const pass=row.querySelector(".pw .inp").value;
+    if(pass.length<8)return show($("uErr"),"يجب أن تكون كلمة المرور 8 أحرف أو أكثر.");
+    b.disabled=true;
+    const {error}=await sb.rpc("admin_set_password",{target:user,new_password:pass});
+    b.disabled=false;
+    if(error)return show($("uErr"),/NO_LOGIN/.test(error.message)?"لا يوجد حساب دخول لهذا المستخدم. احذفه ثم أضفه من جديد.":"تعذّر تغيير كلمة المرور: "+authErr(error));
+    show($("uErr"));row.querySelector(".pw").remove();
+    $("uMade").innerHTML=`تغيّرت كلمة المرور. <span>اسم المستخدم <code>${esc(user)}</code></span><span>كلمة المرور الجديدة <code>${esc(pass)}</code></span>`;$("uMade").hidden=false;}
 });
 })();
 </script>
