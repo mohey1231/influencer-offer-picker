@@ -1275,37 +1275,47 @@ function parseWorkbook(wb,single){
 }
 
 // ---------- PDF export (table drawn on canvas so Arabic shapes correctly, then placed on A4 landscape pages) ----------
-const PDF={W:1123,H:794,S:2.5,M:56,teal:"#1E95B5",tealSoft:"#E2F1F6",zebra:"#EFEEEC",ink:"#333333",title:"#474747",muted:"#7A7A7A",
-  font:'"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif',headH:42,rowH:36};
+// OutMark look: logo on top, violet table, every account link clickable, outmark.sa in the footer
+const PDF={W:1123,H:794,S:2.5,M:56,brand:"#7342EA",brandSoft:"#EEE8FD",zebra:"#F7F6FB",line:"#E3E0EC",ink:"#1A1720",title:"#1A1720",muted:"#625E70",
+  font:'"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif',headH:42,rowH:36,lineH:21,
+  site:"outmark.sa",siteUrl:"https://outmark.sa"};
+const PDOT={snap:"#FFE14D",tt:"#111417",ig:"#C2307A",yt:"#D92B2B",x:"#2B3138"};
 function fitText(ctx,s,max){s=String(s??"");if(ctx.measureText(s).width<=max)return s;
   while(s.length>1&&ctx.measureText(s+"…").width>max)s=s.slice(0,-1);return s+"…";}
+const shortUrl=u=>String(u||"").replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,"");
 function pdfColumns(internal,items){
-  const cols=[{k:"name",l:"اسم المؤثر",w:2.1,a:"start",b:true},{k:"accs",l:"الحسابات",w:2,a:"start"},{k:"cat",l:"الفئة",w:.6,a:"center"},{k:"region",l:"المنطقة",w:1.1,a:"center"}];
-  if(items.some(i=>fmtFollowers(i.followers)))cols.push({k:"followers",l:"المتابعين",w:.95,a:"center"});
-  cols.push({k:"sell",l:"قيمة الإعلان (ر.س)",w:1.35,a:"end",n:true});
-  if(internal)cols.push({k:"cost",l:"التكلفة",w:1.2,a:"end",n:true},{k:"profit",l:"الربح",w:1.2,a:"end",n:true});
+  const cols=[{k:"name",l:"اسم المؤثر",w:1.7,a:"start",b:true},{k:"accs",l:"الحسابات والروابط",w:3,a:"start"},{k:"cat",l:"الفئة",w:.55,a:"center"},{k:"region",l:"المنطقة",w:1,a:"center"}];
+  if(items.some(i=>fmtFollowers(i.followers)))cols.push({k:"followers",l:"المتابعين",w:.85,a:"center"});
+  cols.push({k:"sell",l:"قيمة الإعلان (ر.س)",w:1.25,a:"end",n:true});
+  if(internal)cols.push({k:"cost",l:"التكلفة",w:1.05,a:"end",n:true},{k:"profit",l:"الربح",w:1,a:"end",n:true});
   const tw=PDF.W-2*PDF.M,sum=cols.reduce((s,c)=>s+c.w,0);let x=PDF.W-PDF.M; // RTL: first column on the right
   cols.forEach(c=>{c.px=tw*c.w/sum;c.x1=x;c.x0=x-c.px;x=c.x0;});
   return cols;
 }
 function pdfRows(internal){
   const items=state.cart,g=groups(items),rows=[];
-  for(const [p,arr] of g)for(const i of arr)rows.push({t:"item",name:i.name,cat:p,region:i.region,followers:fmtFollowers(i.followers),
-    accs:accountsOf(i).map(a=>({label:a.platform,url:cleanLink(a.link)})),sell:i.sell,cost:i.cost,profit:(i.sell||0)-(i.cost||0)});
+  for(const [p,arr] of g)for(const i of arr){const accs=accountsOf(i).map(a=>({label:a.platform,key:pk(a.platform),url:cleanLink(a.link)}));
+    rows.push({t:"item",name:i.name,cat:p,region:i.region,followers:fmtFollowers(i.followers),accs,
+      h:Math.max(PDF.rowH,14+Math.max(1,accs.length)*PDF.lineH),sell:i.sell,cost:i.cost,profit:(i.sell||0)-(i.cost||0)});}
   if(g.size>1)for(const [p,arr] of g){const s=totals(arr);rows.push({t:"sub",name:`إجمالي الفئة ${p}`,sell:s.sell,cost:s.cost,profit:s.profit});}
   const t=totals(items);rows.push({t:"total",name:"الإجمالي الكلي",sell:t.sell,cost:t.cost,profit:t.profit});
   if(state.budget!=null){const rem=state.budget-t.sell;
     rows.push({t:"sub",name:"ميزانية العميل",sell:state.budget});
     rows.push({t:rem<0?"over":"sub",name:rem<0?"زيادة عن الميزانية":"المتبقي من الميزانية",sell:Math.abs(rem)});}
+  rows.forEach(r=>{r.h=r.h||PDF.rowH;});
   return rows;
+}
+async function pdfLogo(){ // the OutMark logo already embedded in the page header (dark ink, for white paper)
+  const src=document.querySelector(".logo-on-light")?.src;if(!src)return null;
+  const im=new Image();im.src=src;try{await im.decode();}catch(e){return null;}return im;
 }
 async function buildPdf(internal){
   if(!window.jspdf){throw new Error("nolib");}
   try{await Promise.all(["400","600","700"].map(w=>document.fonts.load(`${w} 16px "IBM Plex Sans Arabic"`,"عرض")));}catch(e){}
-  const {jsPDF}=window.jspdf,items=state.cart,cols=pdfColumns(internal,items),rows=pdfRows(internal);
-  const name=state.open.name.trim(),first=150,later=60,bottom=PDF.H-56;
+  const {jsPDF}=window.jspdf,items=state.cart,cols=pdfColumns(internal,items),rows=pdfRows(internal),logo=await pdfLogo();
+  const name=state.open.name.trim(),first=196,later=84,bottom=PDF.H-62;
   const pages=[];let cur=[],y=first+PDF.headH;
-  for(const r of rows){if(y+PDF.rowH>bottom){pages.push(cur);cur=[];y=later+PDF.headH;}cur.push(r);y+=PDF.rowH;}
+  for(const r of rows){if(y+r.h>bottom&&cur.length){pages.push(cur);cur=[];y=later+PDF.headH;}cur.push(r);y+=r.h;}
   pages.push(cur);
   const doc=new jsPDF({orientation:"landscape",unit:"mm",format:"a4",compress:true});
   const mm=PDF.W/297,F=PDF.font,images=[];
@@ -1313,53 +1323,72 @@ async function buildPdf(internal){
     const cv=document.createElement("canvas");cv.width=PDF.W*PDF.S;cv.height=PDF.H*PDF.S;
     const c=cv.getContext("2d");c.scale(PDF.S,PDF.S);c.fillStyle="#fff";c.fillRect(0,0,PDF.W,PDF.H);
     c.direction="rtl";c.textBaseline="middle";
+    const links=[],addLink=(x,y,w,h,url)=>links.push({x:x/mm,y:y/mm,w:w/mm,h:h/mm,url});
+    // brand header: logo on the right (RTL start), thin violet rule under it
+    const lh=pi===0?58:34,ly=pi===0?30:22;
+    if(logo){const lw=lh*logo.naturalWidth/logo.naturalHeight;c.drawImage(logo,PDF.W-PDF.M-lw,ly,lw,lh);addLink(PDF.W-PDF.M-lw,ly,lw,lh,PDF.siteUrl);}
+    c.fillStyle=PDF.brand;c.fillRect(PDF.M,ly+lh+14,PDF.W-2*PDF.M,2);
     let top=later;
     if(pi===0){
-      c.fillStyle=PDF.title;c.font=`700 27px ${F}`;c.textAlign="center";
-      c.fillText(fitText(c,`عرض مؤثرين${name?" — "+name:""}`,PDF.W-2*PDF.M),PDF.W/2,72);
+      c.fillStyle=PDF.muted;c.font=`500 14px ${F}`;c.textAlign="left";
+      c.fillText(internal?"نسخة داخلية":"عرض مقدّم من OutMark",PDF.M,ly+lh/2);
+      c.fillStyle=PDF.title;c.font=`700 26px ${F}`;c.textAlign="right";
+      c.fillText(fitText(c,`عرض مؤثرين${name?" — "+name:""}`,PDF.W-2*PDF.M),PDF.W-PDF.M,138);
       const d=new Date(),MON=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
       const meta=[`${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`,`${items.length} مؤثر`];
-      if(state.open.client&&state.open.client.trim())meta.unshift(`العميل: ${state.open.client.trim()}`);if(state.budget!=null)meta.push(`الميزانية ${fmt(state.budget)} ر.س`);if(internal)meta.push("نسخة داخلية");
-      c.fillStyle=PDF.muted;c.font=`400 14px ${F}`;c.fillText(meta.join("   ·   "),PDF.W/2,106);
+      if(state.open.client&&state.open.client.trim())meta.unshift(`العميل: ${state.open.client.trim()}`);if(state.budget!=null)meta.push(`الميزانية ${fmt(state.budget)} ر.س`);
+      c.fillStyle=PDF.muted;c.font=`400 14px ${F}`;c.fillText(meta.join("   ·   "),PDF.W-PDF.M,170);
       top=first;
     }
-    // header
-    cols.forEach(col=>{c.fillStyle=PDF.teal;c.fillRect(col.x0+1,top,col.px-2,PDF.headH);
-      c.fillStyle="#fff";c.font=`500 15px ${F}`;
+    // table header
+    cols.forEach(col=>{c.fillStyle=PDF.brand;c.fillRect(col.x0+1,top,col.px-2,PDF.headH);
+      c.fillStyle="#fff";c.font=`600 14.5px ${F}`;
       if(col.a==="start"){c.textAlign="right";c.fillText(col.l,col.x1-14,top+PDF.headH/2);}
       else{c.textAlign="center";c.fillText(col.l,(col.x0+col.x1)/2,top+PDF.headH/2);}});
     let ry=top+PDF.headH;
     pageRows.forEach((r,ri)=>{
-      const zebra=r.t==="item"&&(ri%2===1),fill=r.t==="total"?PDF.teal:r.t==="sub"||r.t==="over"?PDF.tealSoft:zebra?PDF.zebra:"#fff";
-      const color=r.t==="total"?"#fff":r.t==="over"?"#B4321A":PDF.ink,bold=r.t!=="item";
+      const h=r.h,zebra=r.t==="item"&&(ri%2===1),fill=r.t==="total"?PDF.brand:r.t==="sub"||r.t==="over"?PDF.brandSoft:zebra?PDF.zebra:"#fff";
+      const color=r.t==="total"?"#fff":r.t==="over"?"#C2335F":PDF.ink,bold=r.t!=="item";
       cols.forEach((col,ci)=>{
-        c.fillStyle=fill;c.fillRect(col.x0+1,ry,col.px-2,PDF.rowH);
-        if(ci>0&&r.t==="item"){c.fillStyle=PDF.teal;c.fillRect(col.x0+1,ry+PDF.rowH-1.2,col.px-2,1.2);}
-        if(col.k==="accs"){if(r.t!=="item")return; // one linked platform name per account, right to left
-          const pad=14,mid=ry+PDF.rowH/2,list=r.accs||[];let x=col.x1-pad;
-          c.font=`400 14.5px ${F}`;c.textAlign="right";
-          if(!list.length){c.fillStyle=PDF.muted;c.fillText("—",x,mid);return;}
-          list.forEach((a,k)=>{const s=(k?"، ":"")+a.label,w=c.measureText(s).width;if(x-w<col.x0+pad)return;
-            c.fillStyle=a.url?PDF.teal:PDF.ink;c.fillText(s,x,mid);
-            if(a.url)(pageRows._links||(pageRows._links=[])).push({x:(x-w)/mm,y:(ry+6)/mm,w:w/mm,h:(PDF.rowH-12)/mm,url:a.url});
-            x-=w;});
+        c.fillStyle=fill;c.fillRect(col.x0+1,ry,col.px-2,h);
+        if(r.t==="item"){c.fillStyle=PDF.line;c.fillRect(col.x0+1,ry+h-1,col.px-2,1);}
+        const pad=14,mid=ry+h/2;
+        if(col.k==="accs"){if(r.t!=="item")return; // one line per account: platform dot + name, then its clickable link
+          const list=r.accs||[];
+          if(!list.length){c.fillStyle=PDF.muted;c.font=`400 14px ${F}`;c.textAlign="right";c.fillText("—",col.x1-pad,mid);return;}
+          const y0=mid-(list.length-1)*PDF.lineH/2;
+          list.forEach((a,k)=>{const ly2=y0+k*PDF.lineH;let x=col.x1-pad;
+            c.fillStyle=PDOT[a.key]||PDOT.x;c.beginPath();c.arc(x-4,ly2,4,0,Math.PI*2);c.fill();
+            if(a.key==="snap"){c.strokeStyle="#C9A800";c.lineWidth=.8;c.stroke();}
+            x-=14;c.fillStyle=PDF.muted;c.font=`500 12.5px ${F}`;c.textAlign="right";c.fillText(a.label,x,ly2);
+            x-=c.measureText(a.label).width+10;
+            if(!a.url){c.fillStyle=PDF.muted;c.fillText("بدون رابط",x,ly2);return;}
+            c.save();c.direction="ltr";c.textAlign="right";c.font=`500 13px ${F}`;c.fillStyle=PDF.brand;
+            const s=fitText(c,shortUrl(a.url),x-(col.x0+pad)),w=c.measureText(s).width;c.fillText(s,x,ly2);
+            c.fillRect(x-w,ly2+8,w,.8);c.restore();
+            addLink(x-w,ly2-9,w,18,a.url);});
           return;}
         let v=r[col.k];if(v==null||v===""){if(r.t!=="item")return;v="—";}
         if(col.n)v=fmt(v);
         c.fillStyle=color;c.font=`${(col.b||bold)?600:400} 14.5px ${F}`;
-        const pad=14,mid=ry+PDF.rowH/2;
         if(col.a==="start"){c.textAlign="right";c.fillText(fitText(c,v,col.px-2*pad),col.x1-pad,mid);}
         else if(col.a==="end"){c.textAlign="left";c.fillText(fitText(c,v,col.px-2*pad),col.x0+pad,mid);}
         else{c.textAlign="center";c.fillText(fitText(c,v,col.px-2*pad),(col.x0+col.x1)/2,mid);}
       });
-      ry+=PDF.rowH;
+      ry+=h;
     });
-    c.fillStyle=PDF.muted;c.font=`400 12px ${F}`;c.textAlign="center";
-    c.fillText(`صفحة ${pi+1} من ${pages.length}`,PDF.W/2,PDF.H-28);
+    // footer: violet rule, clickable website in the middle, page number at the side
+    const fy=PDF.H-30;
+    c.fillStyle=PDF.line;c.fillRect(PDF.M,fy-18,PDF.W-2*PDF.M,1);
+    c.save();c.direction="ltr";c.textAlign="center";c.font=`700 14px ${F}`;c.fillStyle=PDF.brand;
+    const sw=c.measureText(PDF.site).width;c.fillText(PDF.site,PDF.W/2,fy);c.restore();
+    addLink(PDF.W/2-sw/2-4,fy-10,sw+8,20,PDF.siteUrl);
+    c.fillStyle=PDF.muted;c.font=`400 12px ${F}`;c.textAlign="right";
+    c.fillText(`صفحة ${pi+1} من ${pages.length}`,PDF.W-PDF.M,fy);
     const data=cv.toDataURL("image/png");images.push(data);
     if(pi>0)doc.addPage("a4","landscape");
     doc.addImage(data,"PNG",0,0,297,210,undefined,"FAST");
-    (pageRows._links||[]).forEach(l=>doc.link(l.x,l.y,l.w,l.h,{url:l.url}));
+    links.forEach(l=>doc.link(l.x,l.y,l.w,l.h,{url:l.url}));
   });
   window.__pdfPreview=images; // inspection aid only
   return doc;
