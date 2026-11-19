@@ -104,6 +104,58 @@ svg.ic{width:1em;height:1em;flex:none;display:inline-block;vertical-align:-.125e
 .drop{border:1.5px dashed var(--line);border-radius:12px;padding:18px;text-align:center;color:var(--muted);cursor:pointer;display:block}
 .drop.over{border-color:var(--accent);background:var(--accent-soft)}
 .drop strong{color:var(--ink);display:block;font-weight:600}
+.sheet-link{display:grid;gap:6px;margin:0}
+.sl-row{display:flex;gap:8px}
+.sl-row .inp{flex:1 1 auto;min-width:0}
+.preview{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:14px;display:grid;gap:12px}
+.pv-head{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.pv-head b{font-family:var(--f-display);font-size:16px}
+.pv-head span{color:var(--muted);font-size:13px}
+.pv-stats{display:flex;flex-wrap:wrap;gap:8px}
+.pv-stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:112px}
+.pv-stat .k{font-size:12px;color:var(--muted)}
+.pv-stat .v{font-size:22px;font-weight:700;font-family:var(--f-display);line-height:1.3}
+.pv-stat.new .v{color:var(--accent)}
+.pv-stat.upd .v{color:var(--info)}
+.pv-stat.del .v{color:var(--danger)}
+.preview details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.preview summary{cursor:pointer;font-weight:600}
+.pv-list{list-style:none;margin:8px 0 0;padding:0;max-height:280px;overflow:auto;font-size:14px}
+.pv-list li{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.pv-list li:first-child{border-top:0}
+.pv-list .nm{font-weight:600}
+.pv-list .ch{color:var(--muted);font-size:13px}
+.pv-note{font-size:13px;color:var(--muted);margin:0}
+.pv-note.warn{color:var(--danger)}
+.pl{display:block;white-space:nowrap;line-height:1.55}
+.pl small{color:var(--muted);font-size:11px;font-weight:500;margin-inline-end:6px}
+.acm{font-size:12px;color:var(--info);background:var(--info-soft);border-radius:999px;padding:0 8px;white-space:nowrap}
+.cprice{display:inline-flex;gap:6px;align-items:center}
+.ty{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 8px;background:transparent;white-space:nowrap;line-height:20px}
+button.ty{cursor:pointer;color:var(--accent);border-color:var(--accent);font-weight:600}
+.ptab{width:100%;border-collapse:collapse;font-size:14px}
+.ptab th,.ptab td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:start}
+.ptab thead th{font-size:12px;color:var(--muted);font-weight:600}
+.ptab td.num{text-align:end}
+.ptab tr.off{opacity:.55}
+.ptab .gold{color:var(--gold);font-weight:600}
+.info{display:grid;gap:8px;margin:0}
+.info div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px}
+.info dt{color:var(--muted);font-size:13px}
+.info dd{margin:0;overflow-wrap:anywhere}
+.edform .dr-body{display:grid;gap:14px}
+.edform .fld{font-size:13px}
+.edform .fld .inp,.edform .fld .sel{color:var(--ink);width:100%;font-weight:400}
+.ed2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.edset{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0;display:grid;gap:8px;min-width:0}
+.edset legend{font-size:13px;font-weight:600;padding:0 6px}
+.acc-row{display:grid;grid-template-columns:120px minmax(0,1fr) 32px;gap:6px;align-items:center}
+.acc-row .x{width:32px;height:32px}
+.ptab-ed{display:grid;grid-template-columns:64px minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center}
+.ptab-ed .inp{width:100%}
+.edform textarea{resize:vertical;font:inherit;color:var(--ink)}
+@media (max-width:480px){.ed2{grid-template-columns:1fr}.acc-row{grid-template-columns:96px minmax(0,1fr) 32px}}
+.deal{font-size:12px;font-weight:600;color:var(--gold);background:var(--gold-soft);border-radius:999px;padding:1px 8px;white-space:nowrap;direction:rtl}
 
 /* main layout */
 .main{display:grid;grid-template-columns:minmax(0,1fr) 396px;gap:18px;align-items:start;padding-bottom:40px}
@@ -173,6 +225,16 @@ a.acc:hover{text-decoration:underline;text-underline-offset:2px}
 .av{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;flex:none;font-family:var(--f-display)}
 .av .badge{position:absolute;bottom:-3px;left:-3px;width:18px;height:18px;border-radius:6px;display:grid;place-items:center;font-size:11px;box-shadow:0 0 0 2px var(--surface)}
 .row.sel .av .badge{box-shadow:0 0 0 2px var(--accent-soft)}
+.row.picked{background:var(--danger-soft)}
+.row .add.pick{border-radius:7px}
+.row .add.pick:hover{border-color:var(--danger);color:var(--danger)}
+.row.picked .add.pick,.row.sel.picked .add.pick{background:var(--danger);border-color:var(--danger);color:#fff}
+.delbar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;background:var(--danger-soft);border:1px solid var(--danger);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:14px}
+.delbar .n{font-weight:700;color:var(--danger)}
+.delbar .sp{flex:1 1 auto}
+.btn.danger-solid{background:var(--danger);border-color:var(--danger);color:#fff}
+.toast .tact{background:none;border:0;color:inherit;font-weight:700;text-decoration:underline;cursor:pointer;margin-inline-start:12px;padding:0}
+.dr-del{margin-top:4px}
 .who .txt{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
 .nameBtn{background:none;border:0;padding:0;cursor:pointer;font-weight:600;text-align:right;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nameBtn:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
@@ -440,12 +502,29 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
   <section class="panel" id="importPanel" hidden>
     <h2>استيراد ملف المؤثرين</h2>
     <div class="grid">
-      <label class="drop" id="drop" for="file">
-        <strong>اختر ملف Excel أو اسحبه إلى هنا</strong>
-        <span>xlsx أو xls أو csv. ستُقرأ جميع أوراق الملف.</span>
-        <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
-      </label>
-      <div style="display:grid;gap:12px">
+      <div style="display:grid;gap:12px;align-content:start">
+        <label class="drop" id="drop" for="file">
+          <strong>اختر ملف Excel أو اسحبه إلى هنا</strong>
+          <span>xlsx أو xls أو csv. ستُقرأ جميع أوراق الملف.</span>
+          <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+        </label>
+        <form class="sheet-link" id="sheetForm" novalidate>
+          <span class="lbl">أو الصق رابط Google Sheets</span>
+          <span class="sl-row">
+            <input class="inp" id="sheetUrl" dir="ltr" placeholder="https://docs.google.com/spreadsheets/d/…" autocomplete="off" spellcheck="false">
+            <button class="btn" id="sheetGo" type="submit">قراءة الرابط</button>
+          </span>
+          <span class="hint">يجب أن تكون مشاركة الشيت «أي شخص لديه الرابط يمكنه العرض».</span>
+        </form>
+      </div>
+      <div style="display:grid;gap:12px;align-content:start">
+        <div style="display:grid;gap:6px">
+          <span class="lbl">طريقة الاستيراد:</span>
+          <div class="radio" role="radiogroup">
+            <label><input type="radio" name="imode" value="add" checked><span>إضافة إلى القائمة الحالية</span></label>
+            <label><input type="radio" name="imode" value="replace"><span>استبدال القائمة بالكامل</span></label>
+          </div>
+        </div>
         <div style="display:grid;gap:6px">
           <span class="lbl">إذا احتوى الملف على عمود سعر واحد فقط، فهو:</span>
           <div class="radio" role="radiogroup">
@@ -458,9 +537,11 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
         </label>
       </div>
     </div>
-    <p class="hint">يتعرّف النظام على صف العناوين تلقائيًا: <b>اسم المؤثر</b>، <b>الحسابات / الرابط</b> (ممكن أكثر من رابط في نفس الخانة، أو عمود لكل منصة مثل «سناب» و«تيك توك»)، <b>الفئة</b> (A أو B أو C)، <b>المنطقة</b>، <b>قيمة الإعلان / التكلفة</b>، <b>سعر البيع</b>، و<b>المتابعين</b>. الاسم المكرّر في أكثر من صف يُدمج في مؤثر واحد بكل حساباته، وإذا لم يوجد عمود للفئة تُوزَّع الفئات مؤقتًا. تُحفظ القائمة المرفوعة على هذا المتصفح فقط.</p>
+    <p class="hint">يتعرّف النظام على صف العناوين تلقائيًا: <b>اسم المؤثر</b>، <b>الفئة</b> (A أو B أو C)، <b>السعر الرسمي</b> و<b>سعر أوت مارك</b> للإعلان المنزلي والتغطية، <b>المنصة</b>، <b>طريقة الوصول</b>، <b>رقم التواصل</b>، <b>رابط الحساب</b>، و<b>الملاحظات</b>. المنطقة تؤخذ من عمود «المنطقة» أو من اسم الورقة أو من عناوين «منطقة …» داخلها. الملف الذي فيه عمود سعر واحد فقط (مثل «قيمة الإعلان») يُقرأ حسب الاختيار أعلاه. الاسم المكرّر يُدمج في مؤثر واحد، وتُكمَّل بياناته الناقصة من الصفوف الأخرى. الخانات الفارغة تبقى فارغة، وتُضاف لاحقًا من «تعديل البيانات» في ملف المؤثر. أقسام «مقابل منتج / UGC» تُضاف بدون سعر. في وضع الإضافة يُعرَف المؤثر الموجود من اسمه ويُحدَّث، ولا يُحذف أحد. تظهر معاينة قبل الحفظ، وبعد التأكيد تُحفظ القائمة لكل الفريق.</p>
+    <div class="preview" id="impPreview" hidden></div>
     <div class="frow">
       <button class="btn ghost" id="resetSample" hidden>استعادة البيانات التجريبية</button>
+      <button class="btn ghost danger" id="wipeLib">حذف كل المؤثرين من القائمة</button>
       <button class="btn ghost" id="closeImport">إغلاق</button>
     </div>
   </section>
@@ -548,8 +629,18 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
           <span class="count" id="count"></span>
           <div class="frow">
             <button class="btn ghost" id="clearFilters">مسح الفلاتر</button>
+            <button class="btn ghost" id="addInf">إضافة مؤثر</button>
+            <button class="btn ghost danger" id="delMode" aria-pressed="false">تحديد للحذف</button>
             <button class="btn" id="addAll">أضف كل النتائج</button>
           </div>
+        </div>
+        <div class="delbar" id="delBar" hidden>
+          <span>اختر المؤثرين المراد حذفهم من القائمة: <span class="n num" id="delN">0</span> محدد</span>
+          <span class="sp"></span>
+          <button class="btn sm" id="delAllRes">تحديد كل النتائج</button>
+          <button class="btn sm ghost" id="delNone">إلغاء التحديد</button>
+          <button class="btn sm danger-solid" id="delGo" disabled>حذف المحدد</button>
+          <button class="btn sm ghost" id="delDone">إنهاء</button>
         </div>
         <div class="list" id="list"></div>
       </div>
@@ -689,13 +780,14 @@ const pk=p=>PKEY[p]||"x";
 const pIcon=p=>ICONS[PKEY[p]]||ICONS.web;
 const platBadge=p=>`<span class="plat p-${pk(p)}">${pIcon(p)}${esc(p)}</span>`;
 const pico=p=>`<span class="pico pi-${pk(p)}" aria-hidden="true">${pIcon(p)}</span>`;
-function cleanLink(u){u=String(u||"").trim(); if(!u)return""; if(/^https?:\/\//i.test(u))return u;
+function cleanLink(u){u=String(u||"").trim().replace(/&amp;/gi,"&"); if(!u)return""; if(/^https?:\/\//i.test(u))return u;
   if(/^(www\.|[a-z0-9-]+\.(com|net|app|me|tv)\/)/i.test(u))return"https://"+u; return"";}
 function platFromLink(u){u=String(u||"");
   if(/snapchat\.com|snap\.com/i.test(u))return"سناب شات"; if(/tiktok\.com/i.test(u))return"تيك توك";
   if(/instagram\.com|instagr\.am/i.test(u))return"إنستجرام"; if(/youtube\.com|youtu\.be/i.test(u))return"يوتيوب";
   if(/\/\/(www\.)?(twitter|x)\.com/i.test(u))return"إكس"; return"";}
 function handleOf(u){const l=cleanLink(u);if(!l)return"";
+  const sh=l.match(/snapchat\.com\/t\/([\w-]+)/i);if(sh)return"snapchat.com/t/"+sh[1]; // short share link, no username in it
   const parts=l.replace(/^https?:\/\/[^/]+\/?/i,"").split(/[?#]/)[0].split("/").filter(p=>p&&!/^(add|user|c|channel)$/i.test(p));
   const h=decodeURIComponent(parts[0]||"").replace(/^@/,"");return h?"@"+h:l.replace(/^https?:\/\/(www\.)?/i,"");}
 // a cell can hold several links (new line, space, comma or «،» between them)
@@ -707,6 +799,32 @@ function accountsOf(i){
   if(Array.isArray(i.accounts)&&i.accounts.length)return i.accounts;
   return i.link||(i.platform&&i.platform!=="غير محدد")?[{platform:i.platform||"غير محدد",link:i.link||""}]:[];}
 const platsOf=i=>[...new Set(accountsOf(i).map(a=>a.platform))];
+const isDeal=i=>!!i&&i.deal==="product"; // UGC: posts in exchange for the product, no fee
+const DEAL_TXT="مقابل منتج";
+const MISSING='<span class="tag">غير مسجل</span>';
+const sellHtml=i=>isDeal(i)?`<span class="deal">${DEAL_TXT}</span>`:i.sell==null?MISSING:fmt(i.sell);
+const costHtml=i=>isDeal(i)?"—":i.cost==null||i.costSrc==="missing"?MISSING:fmt(i.cost);
+// two kinds of ad, as in the team sheet: «منزلي» and «تغطية»; each has the official price (what the client pays) and OutMark's price (our cost)
+const TYPES={home:"منزلي",cover:"تغطية"};
+const posNum=x=>x!=null&&x!==""&&isFinite(+x)&&+x>0?+x:null;
+function normPrices(p){if(!p)return null;const s=t=>({sell:posNum(p[t]&&p[t].sell),cost:posNum(p[t]&&p[t].cost)});return {home:s("home"),cover:s("cover")};}
+const hasType=(i,t)=>!!(i&&i.prices&&i.prices[t]&&(i.prices[t].sell!=null||i.prices[t].cost!=null));
+const typesOf=i=>i&&i.prices?Object.keys(TYPES).filter(t=>hasType(i,t)):[];
+const firstType=i=>hasType(i,"home")?"home":hasType(i,"cover")?"cover":"home";
+function applyType(it,t){const p=(it.prices&&it.prices[t])||{};it.type=t;
+  it.sell=p.sell??p.cost??null;it.sellSrc=p.sell!=null?"sheet":"missing";
+  it.cost=p.cost??p.sell??null;it.costSrc=p.cost!=null?"sheet":"missing";}
+// a price cell in the list: one line per ad type («منزلي 40,000» / «تغطية 35,000»)
+function priceCell(i,k){
+  if(isDeal(i))return k==="sell"?`<span class="deal">${DEAL_TXT}</span>`:"—";
+  if(!i.prices)return k==="sell"?`<span class="num">${sellHtml(i)}</span>`:`<span class="num">${costHtml(i)}</span>${i.costSrc==="derived"?' <span class="tag">تقديري</span>':""}`;
+  const ts=typesOf(i);if(!ts.length)return MISSING;
+  return ts.map(t=>{const v=i.prices[t][k];return `<span class="pl"><small>${TYPES[t]}</small>${v!=null?`<span class="num">${fmt(v)}</span>`:MISSING}</span>`;}).join("");
+}
+function typeBtn(i){const ts=typesOf(i);if(!ts.length)return"";
+  if(ts.length===1)return `<span class="ty">${TYPES[ts[0]]}</span>`;
+  return `<button class="ty sw" data-act="type" title="تبديل نوع الإعلان">${TYPES[i.type||ts[0]]}</button>`;}
+const catName=c=>c?`الفئة ${c}`:"بدون فئة";
 const catBadge=c=>`<span class="cat cat-${esc(String(c||"").toLowerCase())}">${esc(c||"—")}</span>`;
 function accList(i){const acc=accountsOf(i);
   if(!acc.length)return`<span class="accs"><span class="noacc">بدون حساب</span></span>`;
@@ -723,25 +841,28 @@ function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth
 // ---------- state ----------
 const blankOpen=()=>({id:null,name:"",client:"",status:"draft",savedSig:null});
 const state={lib:[],libSource:"sample",cart:[],open:blankOpen(),budget:null,
-  internal:true,margin:20,shown:PAGE,view:"home",camps:[],db:null,dbState:"loading",profile:null,cf:{q:"",status:"all"},
+  internal:true,margin:20,shown:PAGE,view:"home",camps:[],db:null,dbState:"loading",profile:null,editing:false,cf:{q:"",status:"all"},delMode:false,delSel:new Set(),
   f:{q:"",platform:"all",region:"all",cat:"all",min:null,max:null,sort:"price-desc",fit:true}}; // fit: hide anyone priced above what is left of the budget
 
 // one item = one person; a person can hold several accounts (snap / tiktok / insta …)
 function mkItem(o){
   let accounts=(o.accounts||[]).map(a=>({platform:platFromLink(a.link)||a.platform||"غير محدد",link:cleanLink(a.link)}));
   if(!accounts.length&&(o.link||(o.platform&&o.platform!=="غير محدد")))accounts=[{platform:platFromLink(o.link)||o.platform||"غير محدد",link:cleanLink(o.link)}];
+  const cat=normCat(o.category);
   const it={id:"p|"+o.name,name:o.name,accounts,platform:accounts[0]?.platform||o.platform||"غير محدد",link:accounts.find(a=>a.link)?.link||"",
-    category:normCat(o.category)||autoCat(o.name),catSrc:normCat(o.category)?"sheet":"auto",region:o.region||"غير محدد",
-    followers:o.followers||"",cost:o.cost??null,sell:o.sell??null,
+    category:cat,catSrc:cat?"sheet":"none",region:String(o.region||"").trim()||"غير محدد",
+    followers:o.followers||"",cost:o.cost??null,sell:o.sell??null,deal:o.deal||"",
+    access:o.access||"",phone:o.phone||"",notes:o.notes||"",prices:normPrices(o.prices),
     costSrc:o.costSrc||(o.cost!=null?"sheet":"derived"),sellSrc:o.sellSrc||(o.sell!=null?"sheet":"derived")};
-  derive(it); return it;
+  if(it.prices)applyType(it,o.type&&hasType(it,o.type)?o.type:firstType(it));else derive(it);
+  return it;
 }
 // same name on several rows / sheets → one person with all their accounts (keeps the higher price)
 function mergeByName(items){
   const m=new Map();
   for(const it of items){const ex=m.get(it.id);if(!ex){m.set(it.id,it);continue;}
     for(const a of it.accounts)if(!ex.accounts.some(b=>a.link?b.link===a.link:(!b.link&&b.platform===a.platform)))ex.accounts.push(a);
-    if((it.sell||0)>(ex.sell||0))Object.assign(ex,{cost:it.cost,sell:it.sell,costSrc:it.costSrc,sellSrc:it.sellSrc});
+    if((it.sell||0)>(ex.sell||0))Object.assign(ex,{cost:it.cost,sell:it.sell,costSrc:it.costSrc,sellSrc:it.sellSrc,deal:it.deal||""});
     if(ex.region==="غير محدد"&&it.region!=="غير محدد")ex.region=it.region;
     if(ex.catSrc!=="sheet"&&it.catSrc==="sheet"){ex.category=it.category;ex.catSrc="sheet";}
     if(!ex.followers&&it.followers)ex.followers=it.followers;
@@ -756,17 +877,20 @@ function sampleLib(){return SAMPLE.map(([name,platform,region,cost],k)=>{
   if(k%3===0)own.push(ps[(ps.indexOf(platform)+1)%3]); if(k%5===0)own.push(ps[(ps.indexOf(platform)+2)%3]);
   return mkItem({name,region,cost,category:DEMO_CATS[k],accounts:own.map(p=>({platform:p,link:DEMO_URL[p](DEMO_HANDLE(k+1))}))});});}
 const pack=i=>[i.name,i.platform,i.region,i.costSrc==="sheet"?i.cost:null,i.sellSrc==="sheet"?i.sell:null,i.link||"",i.followers||"",
-  i.catSrc==="sheet"?i.category:"",accountsOf(i).map(a=>[a.platform,a.link])];
-const unpack=a=>mkItem({name:a[0],platform:a[1],region:a[2],cost:a[3],sell:a[4],link:a[5],followers:a[6],category:a[7],
-  accounts:Array.isArray(a[8])?a[8].map(([platform,link])=>({platform,link})):null});
+  i.catSrc==="sheet"?i.category:"",accountsOf(i).map(a=>[a.platform,a.link]),i.deal||"",
+  {p:i.prices||null,a:i.access||"",ph:i.phone||"",n:i.notes||""}];
+const unpack=a=>{const x=a[10]||{};return mkItem({name:a[0],platform:a[1],region:a[2],cost:a[3],sell:a[4],link:a[5],followers:a[6],category:a[7],
+  accounts:Array.isArray(a[8])?a[8].map(([platform,link])=>({platform,link})):null,deal:a[9]||"",
+  prices:x.p||null,access:x.a||"",phone:x.ph||"",notes:x.n||""});};
 const snapItem=i=>({id:i.id,name:i.name,platform:i.platform,accounts:accountsOf(i).map(a=>({...a})),category:i.category,
-  region:i.region,sell:i.sell,cost:i.cost,link:i.link||"",followers:i.followers||""});
+  region:i.region,sell:i.sell,cost:i.cost,link:i.link||"",followers:i.followers||"",deal:i.deal||"",
+  prices:i.prices?JSON.parse(JSON.stringify(i.prices)):null,type:i.prices?(i.type||firstType(i)):null});
 
 // restore local conveniences
 (function restore(){
   const s=store.get("inf-settings"); if(s){state.margin=+s.margin||20; state.internal=s.internal!==false;}
   const lib=store.get("inf-lib3")||store.get("inf-lib2"); // lib2 = older one-row-per-platform format
-  if(lib&&Array.isArray(lib.rows)&&lib.rows.length){state.lib=mergeByName(lib.rows.map(unpack));state.libSource="local";}
+  if(lib&&Array.isArray(lib.rows)&&(lib.rows.length||lib.emptied)){state.lib=mergeByName(lib.rows.map(unpack));state.libSource="local";}
   else state.lib=sampleLib();
   const d=store.get("inf-draft2");
   if(d&&Array.isArray(d.cart)){state.cart=d.cart;state.open=Object.assign(blankOpen(),d.open||{});state.budget=d.budget??null;}
@@ -779,8 +903,8 @@ const isDirty=()=>state.cart.length>0||state.open.id||state.open.name? sig()!==s
 // ---------- derived ----------
 const inCartSet=()=>new Set(state.cart.map(i=>i.id));
 function totals(items){let sell=0,cost=0;for(const i of items){sell+=i.sell||0;cost+=i.cost||0;}return{sell,cost,profit:sell-cost};}
-function groups(items){const g=new Map(),cat=i=>i.category||autoCat(i.name);
-  for(const c of CATS)for(const i of items)if(cat(i)===c){if(!g.has(c))g.set(c,[]);g.get(c).push(i);}return g;}
+function groups(items){const g=new Map(),cat=i=>normCat(i.category);
+  for(const c of [...CATS,""])for(const i of items)if(cat(i)===c){if(!g.has(c))g.set(c,[]);g.get(c).push(i);}return g;}
 function regionColor(){const regs=[...new Set(state.lib.map(i=>i.region))].sort((a,b)=>a.localeCompare(b,"ar"));
   const m=new Map();regs.forEach((r,k)=>m.set(r,REGION_COLORS[k%REGION_COLORS.length]));return m;}
 function membership(){const m=new Map();
@@ -790,16 +914,17 @@ function filtered(){
   const f=state.f,q=f.q.trim(),inCart=inCartSet();
   const rem=state.budget!=null?state.budget-totals(state.cart).sell:null;
   const a=state.lib.filter(i=>{
-    if(q&&!i.name.includes(q))return false;
+    if(q&&!i.name.includes(q)&&!(i.phone||"").includes(q))return false;
     if(f.platform!=="all"&&!platsOf(i).includes(f.platform))return false;
     if(f.region!=="all"&&i.region!==f.region)return false;
-    if(f.cat!=="all"&&i.category!==f.cat)return false;
+    if(f.cat!=="all"&&(f.cat==="none"?!!i.category:i.category!==f.cat))return false;
     if(f.min!=null&&i.sell<f.min)return false;
     if(f.max!=null&&i.sell>f.max)return false;
     if(f.fit&&rem!=null&&!inCart.has(i.id)&&i.sell>rem)return false;
     return true;});
   const s=f.sort;
-  a.sort((x,y)=>s==="price-asc"?x.sell-y.sell:s==="name"?x.name.localeCompare(y.name,"ar"):s==="region"?(x.region.localeCompare(y.region,"ar")||y.sell-x.sell):s==="cat"?(x.category.localeCompare(y.category)||y.sell-x.sell):y.sell-x.sell);
+  const sv=i=>i.sell||0;
+  a.sort((x,y)=>s==="price-asc"?sv(x)-sv(y):s==="name"?x.name.localeCompare(y.name,"ar"):s==="region"?(x.region.localeCompare(y.region,"ar")||sv(y)-sv(x)):s==="cat"?((x.category||"Z").localeCompare(y.category||"Z")||sv(y)-sv(x)):sv(y)-sv(x));
   return a;
 }
 
@@ -812,7 +937,8 @@ function renderFilters(){
   const regs=[...new Set(state.lib.map(i=>i.region))].sort((a,b)=>a.localeCompare(b,"ar"));
   if(state.f.region!=="all"&&!regs.includes(state.f.region))state.f.region="all";
   $("region").innerHTML=`<option value="all">كل المناطق</option>`+regs.map(r=>`<option value="${esc(r)}"${r===state.f.region?" selected":""}>${esc(r)}</option>`).join("");
-  $("cat").innerHTML=`<option value="all">كل الفئات</option>`+CATS.map(c=>`<option value="${c}"${c===state.f.cat?" selected":""}>الفئة ${c} (${fmt(state.lib.filter(i=>i.category===c).length)})</option>`).join("");
+  $("cat").innerHTML=`<option value="all">كل الفئات</option>`+CATS.map(c=>`<option value="${c}"${c===state.f.cat?" selected":""}>الفئة ${c} (${fmt(state.lib.filter(i=>i.category===c).length)})</option>`).join("")+
+    (state.lib.some(i=>!i.category)?`<option value="none"${state.f.cat==="none"?" selected":""}>بدون فئة (${fmt(state.lib.filter(i=>!i.category).length)})</option>`:"");
 }
 function campBadge(list){
   if(!list||!list.length)return"";
@@ -829,22 +955,23 @@ function renderList(){
     (byBudget?` · سعرهم ضمن المتبقي <b class="num">${fmt(Math.max(0,rem))}</b> ر.س`:"");
   $("addAll").textContent=notIn?`أضف كل النتائج (${fmt(notIn)})`:"أُضيفت كل النتائج";
   $("addAll").disabled=!notIn;
-  const head=`<div class="row head"><span></span><span>اسم المؤثر</span><span>الحسابات</span><span>الفئة</span><span>المنطقة</span><span class="end internal">التكلفة</span><span class="end">سعر البيع</span></div>`;
-  if(!rows.length){$("list").innerHTML=head+`<div class="empty">${byBudget&&rem<=0?"اكتملت ميزانية الحملة. لعرض باقي المؤثرين أوقف «ضمن الميزانية المتبقية فقط».":
+  const head=`<div class="row head"><span></span><span>اسم المؤثر</span><span>الحسابات</span><span>الفئة</span><span>المنطقة</span><span class="end internal">سعر أوت مارك</span><span class="end">السعر الرسمي</span></div>`;
+  if(!rows.length){$("list").innerHTML=head+`<div class="empty">${!state.lib.length?"قائمة المؤثرين فارغة. استورد ملف المؤثرين أو رابط Google Sheets من زر «استيراد ملف Excel».":byBudget&&rem<=0?"اكتملت ميزانية الحملة. لعرض باقي المؤثرين أوقف «ضمن الميزانية المتبقية فقط».":
     byBudget?"لا يوجد مؤثرون سعرهم ضمن المتبقي من الميزانية بهذه الفلاتر. وسّع الفلاتر أو أوقف «ضمن الميزانية المتبقية فقط».":"لا يوجد مؤثرون مطابقون لهذه الفلاتر. وسّع نطاق السعر أو امسح الفلاتر."}</div>`;return;}
   const vis=rows.slice(0,state.shown);
   $("list").innerHTML=head+vis.map(i=>{
     const sel=inCart.has(i.id),over=!sel&&rem!=null&&i.sell>rem;
     const fol=fmtFollowers(i.followers);
-    const sub=[fol?`<span class="num">${esc(fol)}</span> متابع`:"",campBadge(mem.get(i.id))].filter(Boolean).join("");
-    return `<div class="row${sel?" sel":""}" data-id="${esc(i.id)}">
-      <button class="add" data-act="toggle" aria-pressed="${sel}" aria-label="${sel?"إزالة":"إضافة"} ${esc(i.name)}">${sel?UI.ok:UI.plus}</button>
+    const sub=[fol?`<span class="num">${esc(fol)}</span> متابع`:"",i.access?`<span class="acm internal">${esc(i.access)}</span>`:"",campBadge(mem.get(i.id))].filter(Boolean).join("");
+    return `<div class="row${sel?" sel":""}${state.delMode&&state.delSel.has(i.id)?" picked":""}" data-id="${esc(i.id)}">
+      ${state.delMode?`<button class="add pick" data-act="pick" aria-pressed="${state.delSel.has(i.id)}" aria-label="تحديد ${esc(i.name)} للحذف">${state.delSel.has(i.id)?UI.ok:""}</button>`
+        :`<button class="add" data-act="toggle" aria-pressed="${sel}" aria-label="${sel?"إزالة":"إضافة"} ${esc(i.name)}">${sel?UI.ok:UI.plus}</button>`}
       <div class="who">${avatar(i)}<div class="txt"><button class="nameBtn" data-act="profile" title="عرض ملف ${esc(i.name)}">${esc(i.name)}</button>${sub?`<span class="sub">${sub}</span>`:""}</div></div>
       ${accList(i)}
       ${catBadge(i.category)}
       <span class="reg"><i style="background:${rc.get(i.region)}"></i>${esc(i.region)}</span>
-      <span class="end cost num internal">${fmt(i.cost)}${i.costSrc==="derived"?' <span class="tag">تقديري</span>':""}</span>
-      <span class="end sellc num${over?" over":""}" ${over?'title="أعلى من المتبقي في الميزانية"':""}>${fmt(i.sell)}</span>
+      <span class="end cost internal">${priceCell(i,"cost")}</span>
+      <span class="end sellc${over?" over":""}" ${over?'title="أعلى من المتبقي في الميزانية"':""}>${priceCell(i,"sell")}</span>
     </div>`;}).join("")+(rows.length>vis.length?`<div class="more"><button class="btn" id="showMore">اعرض ${fmt(Math.min(PAGE,rows.length-vis.length))} إضافيًا</button></div>`:"");
 }
 
@@ -928,8 +1055,8 @@ function renderCart(){
     $("cartBody").innerHTML=`<div class="cart-empty">لم يُضف أي مؤثر بعد.<br>اضغط <b>+</b> بجانب أي مؤثر لإضافته، وسيُحسب الإجمالي تلقائيًا.</div>`;
   }else{
     $("cartBody").innerHTML=[...g].map(([p,arr])=>{const st=totals(arr);
-      return `<div class="grp"><div class="grp-h"><span class="catn">${catBadge(p)}الفئة ${esc(p)}</span><span class="sub">إجمالي <b class="num">${fmt(st.sell)}</b></span></div>`+
-      arr.map(i=>`<div class="ci" data-id="${esc(i.id)}"><button class="nm" data-act="profile">${esc(i.name)}<small>${platsOf(i).map(pico).join("")}${esc(i.region)}</small></button><span class="num">${fmt(i.sell)}</span><button class="x" data-act="remove" aria-label="إزالة ${esc(i.name)}">${UI.x}</button></div>`).join("")+`</div>`;}).join("");
+      return `<div class="grp"><div class="grp-h"><span class="catn">${catBadge(p)}${esc(catName(p))}</span><span class="sub">إجمالي <b class="num">${fmt(st.sell)}</b></span></div>`+
+      arr.map(i=>`<div class="ci" data-id="${esc(i.id)}"><button class="nm" data-act="profile">${esc(i.name)}<small>${platsOf(i).map(pico).join("")}${esc(i.region)}</small></button><span class="cprice">${typeBtn(i)}<span class="num">${sellHtml(i)}</span></span><button class="x" data-act="remove" aria-label="إزالة ${esc(i.name)}">${UI.x}</button></div>`).join("")+`</div>`;}).join("");
   }
   const pct=t.cost?Math.round(t.profit/t.cost*100):0;
   $("totals").innerHTML=`<div><span>إجمالي العرض للعميل</span><span class="big num">${fmt(t.sell)} <small style="font-size:13px;font-weight:500">ر.س</small></span></div>
@@ -944,7 +1071,11 @@ function renderCart(){
 function findItem(id){return state.lib.find(i=>i.id===id)||state.cart.find(i=>i.id===id)||(()=>{for(const c of state.camps)for(const it of c.items||[])if(it.id===id)return it;return null;})();}
 function renderProfile(){
   const d=$("drawer"),id=state.profile;
-  if(!id){d.hidden=true;$("scrim").hidden=true;return;}
+  if(!id){d.hidden=true;$("scrim").hidden=true;delete d.dataset.ed;return;}
+  if(state.editing){ // keep what is being typed: only draw the form once per person
+    if(d.dataset.ed!==id||d.hidden){renderEditor(d,id);d.dataset.ed=id;}
+    if(state.profile){d.hidden=false;$("scrim").hidden=false;}return;}
+  delete d.dataset.ed;
   const i=findItem(id); if(!i){state.profile=null;d.hidden=true;$("scrim").hidden=true;return;}
   const lib=state.lib.find(x=>x.id===id)||i, inCart=inCartSet().has(id), acc=accountsOf(lib).filter(a=>cleanLink(a.link));
   const mem=membership().get(id)||[], fol=fmtFollowers(lib.followers);
@@ -952,21 +1083,23 @@ function renderProfile(){
   d.innerHTML=`<div class="dr-head">
       <div class="dr-top">
         <div class="dr-id">${avatar(lib)}<div style="min-width:0"><h2 id="drName">${esc(lib.name)}</h2>
-          <div class="sub"><span class="catn">${catBadge(lib.category)}الفئة ${esc(lib.category)}</span><span class="reg">${UI.pin}${esc(lib.region)}</span></div></div></div>
+          <div class="sub"><span class="catn">${catBadge(lib.category)}${esc(catName(lib.category))}</span><span class="reg">${UI.pin}${esc(lib.region)}</span></div></div></div>
         <button class="x" data-act="close" aria-label="إغلاق الملف" style="width:34px;height:34px">${UI.x}</button>
       </div>
-      <div class="stats">
-        <div class="stat"><div class="k">سعر البيع</div><div class="v num">${fmt(lib.sell)}</div></div>
-        <div class="stat internal"><div class="k">التكلفة${lib.costSrc==="derived"?" (تقديري)":""}</div><div class="v num">${fmt(lib.cost)}</div></div>
+      ${lib.prices?priceTable(lib)+(fol?`<div class="stats"><div class="stat"><div class="k">عدد المتابعين</div><div class="v num">${esc(fol)}</div></div></div>`:""):`<div class="stats">
+        <div class="stat"><div class="k">سعر البيع</div><div class="v num">${sellHtml(lib)}</div></div>
+        <div class="stat internal"><div class="k">التكلفة${lib.costSrc==="derived"?" (تقديري)":""}</div><div class="v num">${costHtml(lib)}</div></div>
         <div class="stat internal"><div class="k">الربح</div><div class="v gold"><span class="num">${fmt(profit)}</span> <small style="font-size:12px">${pct}%</small></div></div>
         ${fol?`<div class="stat"><div class="k">عدد المتابعين</div><div class="v num">${esc(fol)}</div></div>`:""}
-      </div>
+      </div>`}
       <div class="dr-acts">
         <button class="btn ${inCart?"":"primary"}" data-act="toggle">${inCart?UI.ok+" مضاف إلى الحملة الحالية":UI.plus+" أضف إلى الحملة"}</button>
+        ${state.lib.some(x=>x.id===id)?`<button class="btn" data-act="edit">تعديل البيانات</button>`:""}
         ${acc.length===1?`<a class="btn" href="${esc(cleanLink(acc[0].link))}" target="_blank" rel="noopener noreferrer">${pIcon(acc[0].platform)} فتح الحساب ${UI.ext}</a>`:acc.length?"":`<span class="btn" aria-disabled="true" style="opacity:.55;cursor:default">لا يوجد رابط للحساب</span>`}
       </div>
     </div>
     <div class="dr-body">
+      ${state.lib.some(x=>x.id===id)?infoSection(lib):""}
       <section><h3>الحسابات <span class="pill num">${accountsOf(lib).length}</span></h3>
         ${accountsOf(lib).length?`<div class="clist">${accountsOf(lib).map(a=>{const l=cleanLink(a.link);
           return l?`<a class="citem accrow" href="${esc(l)}" target="_blank" rel="noopener noreferrer">${pico(a.platform)}<span class="cn">${esc(a.platform)} · <span dir="ltr">${esc(handleOf(l))}</span></span>${UI.ext}</a>`
@@ -974,15 +1107,17 @@ function renderProfile(){
           :`<p class="muted-note">لا توجد حسابات مسجّلة.</p>`}
       </section>
       <section><h3>الحملات التي يشارك فيها</h3>
-        ${mem.length?`<div class="clist">${mem.sort((a,b)=>(b.camp.updatedAt||0)-(a.camp.updatedAt||0)).map(({camp,item})=>`<button class="citem" data-act="openCamp" data-cid="${esc(camp.id)}"><span class="cn">${esc(camp.name||"حملة بدون اسم")}</span><span class="status st-${esc(camp.status||"draft")}">${esc(STATUS[camp.status]||STATUS.draft)}</span><span class="num">${fmt(item.sell)}</span></button>`).join("")}</div>`
+        ${mem.length?`<div class="clist">${mem.sort((a,b)=>(b.camp.updatedAt||0)-(a.camp.updatedAt||0)).map(({camp,item})=>`<button class="citem" data-act="openCamp" data-cid="${esc(camp.id)}"><span class="cn">${esc(camp.name||"حملة بدون اسم")}</span><span class="status st-${esc(camp.status||"draft")}">${esc(STATUS[camp.status]||STATUS.draft)}</span><span class="num">${sellHtml(item)}</span></button>`).join("")}</div>`
           :`<p class="muted-note">غير مضاف إلى أي حملة محفوظة بعد.</p>`}
         ${inCart&&(!state.open.id||!mem.some(m=>m.camp.id===state.open.id))?`<p class="muted-note" style="margin-top:8px">ومضاف إلى الحملة الحالية${state.open.id?" (لم تُحفظ بعد)":""}.</p>`:""}
       </section>
+      ${state.lib.some(x=>x.id===id)?`<section class="dr-del"><button class="btn ghost danger" data-act="delOne">حذف ${esc(lib.name)} من القائمة</button>
+        <p class="muted-note" style="margin-top:6px">يُحذف من قائمة المؤثرين لكل الفريق. الحملات المحفوظة تبقى كما هي.</p></section>`:""}
     </div>`;
   d.hidden=false;$("scrim").hidden=false;
 }
-function openProfile(id){state.profile=id;renderProfile();setTimeout(()=>{const b=$("drawer").querySelector("[data-act=close]");b&&b.focus();},0);}
-function closeProfile(){state.profile=null;renderProfile();}
+function openProfile(id){state.profile=id;state.editing=false;renderProfile();setTimeout(()=>{const b=$("drawer").querySelector("[data-act=close]");b&&b.focus();},0);}
+function closeProfile(){state.profile=null;state.editing=false;renderProfile();}
 
 function renderAll(){
   document.body.classList.toggle("client-mode",!state.internal);
@@ -994,7 +1129,7 @@ function renderAll(){
   const home=state.view==="home";
   $("homeView").hidden=!home;$("pickView").hidden=home;$("cartBar").hidden=home;
   if(home)$("cart").classList.remove("open");
-  renderFilters();renderList();renderCamps();renderCart();renderProfile();
+  renderFilters();renderList();renderDelBar();renderCamps();renderCart();renderProfile();
 }
 
 // ---------- cart actions ----------
@@ -1003,7 +1138,10 @@ function toggle(id){
   if(k>=0)state.cart.splice(k,1);else{const it=state.lib.find(i=>i.id===id)||findItem(id);if(it)state.cart.push(snapItem(it));}
   saveDraft();renderList();renderCart();renderCamps();renderProfile();
 }
-let toastT;function toast(msg){const t=$("toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3400);}
+let toastT;function toast(msg,action){const t=$("toast");t.textContent=msg;
+  if(action){const b=document.createElement("button");b.className="tact";b.type="button";b.textContent=action.label;
+    b.onclick=()=>{t.hidden=true;clearTimeout(toastT);action.run();};t.appendChild(b);}
+  t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,action?8000:3400);}
 function armed(btn,label,armedLabel){ // two-step confirm inside the page
   if(btn.dataset.armed&&Date.now()-btn.dataset.armed<3000){delete btn.dataset.armed;btn.textContent=label;return true;}
   btn.dataset.armed=Date.now();btn.textContent=armedLabel;setTimeout(()=>{if(btn.dataset.armed&&Date.now()-btn.dataset.armed>=2900){delete btn.dataset.armed;btn.textContent=label;}},3000);return false;}
@@ -1012,9 +1150,12 @@ $("list").addEventListener("click",e=>{
   if(e.target.closest("#showMore")){state.shown+=PAGE;renderList();return;}
   const row=e.target.closest(".row:not(.head)");if(!row)return;
   if(e.target.closest("[data-act=profile]")){openProfile(row.dataset.id);return;}
+  if(e.target.closest("[data-act=pick]")){const id=row.dataset.id;state.delSel.has(id)?state.delSel.delete(id):state.delSel.add(id);renderList();renderDelBar();return;}
   if(e.target.closest("[data-act=toggle]"))toggle(row.dataset.id);
 });
 $("cartBody").addEventListener("click",e=>{const ci=e.target.closest(".ci");if(!ci)return;
+  if(e.target.closest("[data-act=type]")){const it=state.cart.find(x=>x.id===ci.dataset.id),ts=typesOf(it);
+    if(ts.length>1){applyType(it,ts[(ts.indexOf(it.type)+1)%ts.length]);saveDraft();renderCart();renderList();renderCamps();}return;}
   if(e.target.closest("[data-act=remove]"))toggle(ci.dataset.id);
   else if(e.target.closest("[data-act=profile]"))openProfile(ci.dataset.id);});
 $("addAll").addEventListener("click",()=>{const s=inCartSet();let n=0;for(const i of filtered())if(!s.has(i.id)){state.cart.push(snapItem(i));n++;}
@@ -1077,6 +1218,13 @@ $("drawer").addEventListener("click",e=>{
   if(act==="close")closeProfile();
   else if(act==="toggle")toggle(state.profile);
   else if(act==="sib")openProfile(b.dataset.sid);
+  else if(act==="edit"){state.editing=true;renderProfile();}
+  else if(act==="edCancel"){if(state.profile==="__new")closeProfile();else{state.editing=false;renderProfile();}}
+  else if(act==="accAdd"){$("accRows").insertAdjacentHTML("beforeend",accRow());const ins=$("accRows").querySelectorAll("[name=accL]");ins[ins.length-1].focus();}
+  else if(act==="accDel"){b.closest(".acc-row").remove();}
+  else if(act==="delOne"){const it=state.lib.find(x=>x.id===state.profile);if(!it)return;
+    if(!armed(b,`حذف ${it.name} من القائمة`,"اضغط مجددًا لتأكيد الحذف"))return;
+    const id=state.profile;closeProfile();removeFromLib([id]);}
   else if(act==="openCamp"){const c=state.camps.find(x=>x.id===b.dataset.cid);if(c){closeProfile();openCampaign(c,true);}}
 });
 
@@ -1192,6 +1340,136 @@ async function initDb(db){
   },()=>{});
 }
 
+// ---------- delete from the list (one, a selection, or everyone) ----------
+async function saveLib(){
+  state.libSource="local";store.set("inf-lib3",{rows:state.lib.map(pack),emptied:!state.lib.length});
+  let shared=false;try{shared=await writeLibrary(state.lib);}catch(err){console.error(err);shared=false;}
+  if(shared)state.libSource="db";
+  return shared;
+}
+async function removeFromLib(ids){
+  const set=new Set(ids),before=state.lib.slice(),gone=before.filter(i=>set.has(i.id));
+  if(!gone.length)return;
+  state.lib=before.filter(i=>!set.has(i.id));
+  for(const id of set)state.delSel.delete(id);
+  if(!state.lib.length)state.delMode=false;
+  renderAll();
+  const shared=await saveLib();renderAll();
+  const what=gone.length===1?`حُذف ${gone[0].name}`:`حُذف ${fmt(gone.length)} مؤثر`;
+  toast(what+(shared?" من قائمة الفريق":state.db?" · تعذّر الحفظ للفريق":""),{label:"تراجع",run:async()=>{
+    const have=new Set(state.lib.map(i=>i.id));state.lib=state.lib.concat(gone.filter(i=>!have.has(i.id)));
+    renderAll();const ok=await saveLib();renderAll();
+    toast((gone.length===1?`أُعيد ${gone[0].name}`:`أُعيد ${fmt(gone.length)} مؤثر`)+(ok||!state.db?"":" · تعذّر الحفظ للفريق"));}});
+}
+function renderDelBar(){
+  const on=state.delMode;$("delBar").hidden=!on;
+  $("delMode").setAttribute("aria-pressed",on);$("delMode").textContent=on?"إنهاء الحذف":"تحديد للحذف";
+  $("delMode").hidden=!state.lib.length;
+  $("addAll").hidden=on;
+  if(!on)return;
+  const n=state.delSel.size,go=$("delGo");
+  $("delN").textContent=fmt(n);
+  if(!go.dataset.armed)go.textContent=n?`حذف المحدد (${fmt(n)})`:"حذف المحدد";
+  go.disabled=!n;
+  const res=filtered().filter(i=>!state.delSel.has(i.id)).length;
+  $("delAllRes").textContent=res?`تحديد كل النتائج (${fmt(res)})`:"كل النتائج محددة";$("delAllRes").disabled=!res;
+  $("delNone").disabled=!n;
+}
+function setDelMode(on){state.delMode=on;if(!on)state.delSel.clear();renderList();renderDelBar();}
+$("delMode").addEventListener("click",()=>setDelMode(!state.delMode));
+$("delDone").addEventListener("click",()=>setDelMode(false));
+$("delNone").addEventListener("click",()=>{state.delSel.clear();renderList();renderDelBar();});
+$("delAllRes").addEventListener("click",()=>{for(const i of filtered())state.delSel.add(i.id);renderList();renderDelBar();});
+$("delGo").addEventListener("click",e=>{const n=state.delSel.size;if(!n)return;
+  if(!armed(e.currentTarget,`حذف المحدد (${fmt(n)})`,`اضغط مجددًا لحذف ${fmt(n)} مؤثر`))return;
+  removeFromLib([...state.delSel]);});
+$("wipeLib").addEventListener("click",e=>{const n=state.lib.length;if(!n){toast("القائمة فارغة بالفعل");return;}
+  if(!armed(e.currentTarget,"حذف كل المؤثرين من القائمة",`اضغط مجددًا لحذف كل المؤثرين (${fmt(n)})`))return;
+  openImport(false);removeFromLib(state.lib.map(i=>i.id));});
+
+function priceTable(i){
+  return `<table class="ptab"><thead><tr><th></th><th>السعر الرسمي</th><th class="internal">سعر أوت مارك</th><th class="internal">الربح</th></tr></thead><tbody>${Object.keys(TYPES).map(t=>{
+    const p=i.prices[t],pr=p.sell!=null&&p.cost!=null?p.sell-p.cost:null;
+    return `<tr${hasType(i,t)?"":' class="off"'}><th>${TYPES[t]}</th><td class="num">${p.sell!=null?fmt(p.sell):MISSING}</td><td class="num internal">${p.cost!=null?fmt(p.cost):MISSING}</td><td class="num internal gold">${pr!=null?fmt(pr):"—"}</td></tr>`;}).join("")}</tbody></table>`;}
+function telOf(ph){const d=String(ph||"").replace(/[^\d+]/g,"");return /^(\+?966|0)?5\d{8}$/.test(d)?d:"";}
+function infoSection(i){const ph=String(i.phone||"").trim(),tel=telOf(ph);
+  const rows=[["المنصة",esc(i.platform||"غير محدد")],["طريقة الوصول",i.access?esc(i.access):MISSING],
+    ["رقم التواصل",ph?(tel?`<a href="tel:${esc(tel)}" dir="ltr">${esc(ph)}</a>`:esc(ph)):MISSING],
+    ["الملاحظات",i.notes?esc(i.notes).replace(/\n/g,"<br>"):MISSING]];
+  const gaps=!i.access||!ph||!accountsOf(i).some(a=>cleanLink(a.link))||(i.prices?!typesOf(i).length:i.sell==null)||!i.category;
+  return `<section class="internal"><h3>بيانات التواصل</h3><dl class="info">${rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
+    ${gaps?`<p class="muted-note" style="margin-top:8px">بعض البيانات غير مسجلة. أضفها من «تعديل البيانات».</p>`:""}</section>`;}
+
+// ---------- edit an influencer (or add a new one) in the drawer ----------
+const PLATFORMS=["سناب شات","تيك توك","إنستجرام","يوتيوب","إكس","غير محدد"];
+function accRow(a){a=a||{platform:"سناب شات",link:""};const opts=PLATFORMS.includes(a.platform)?PLATFORMS:[a.platform,...PLATFORMS];
+  return `<div class="acc-row"><select class="sel" name="accP" aria-label="المنصة">${opts.map(p=>`<option${p===a.platform?" selected":""}>${esc(p)}</option>`).join("")}</select>
+    <input class="inp" name="accL" dir="ltr" placeholder="رابط الحساب أو اسم المستخدم" value="${esc(a.link||"")}" aria-label="رابط الحساب">
+    <button type="button" class="x" data-act="accDel" aria-label="حذف هذا الحساب">${UI.x}</button></div>`;}
+function renderEditor(d,id){
+  const isNew=id==="__new",i=isNew?null:state.lib.find(x=>x.id===id);
+  if(!isNew&&!i){state.editing=false;state.profile=null;d.hidden=true;$("scrim").hidden=true;return;}
+  const p=i?(i.prices||{home:{sell:isDeal(i)?null:i.sell,cost:i.costSrc==="sheet"&&!isDeal(i)?i.cost:null},cover:{}}):{home:{},cover:{}};
+  const regs=[...new Set(state.lib.map(x=>x.region))].filter(r=>r&&r!=="غير محدد").sort((a,b)=>a.localeCompare(b,"ar"));
+  const ways=[...new Set(state.lib.map(x=>x.access).filter(Boolean))];
+  const v=x=>x!=null?esc(String(x)):"",accs=i?accountsOf(i):[];
+  d.innerHTML=`<form class="edform" id="edForm" novalidate autocomplete="off">
+    <div class="dr-head"><div class="dr-top"><h2 id="drName">${isNew?"إضافة مؤثر":"تعديل بيانات "+esc(i.name)}</h2>
+      <button type="button" class="x" data-act="edCancel" aria-label="إلغاء" style="width:34px;height:34px">${UI.x}</button></div></div>
+    <div class="dr-body">
+      ${isNew?`<label class="fld">اسم المؤثر<input class="inp" name="name" required></label>`:""}
+      <div class="ed2">
+        <label class="fld">المنطقة<input class="inp" name="region" list="edRegs" value="${v(i&&i.region!=="غير محدد"?i.region:"")}"></label>
+        <label class="fld">الفئة<select class="sel" name="category"><option value="">بدون فئة</option>${CATS.map(c=>`<option${i&&i.category===c?" selected":""}>${c}</option>`).join("")}</select></label>
+        <label class="fld">طريقة الوصول<input class="inp" name="access" list="edWays" value="${v(i&&i.access)}" placeholder="دايركت، سمارت، مزن…"></label>
+        <label class="fld">رقم التواصل<input class="inp" name="phone" dir="ltr" value="${v(i&&i.phone)}" placeholder="05xxxxxxxx"></label>
+      </div>
+      <datalist id="edRegs">${regs.map(r=>`<option value="${esc(r)}">`).join("")}</datalist>
+      <datalist id="edWays">${ways.map(r=>`<option value="${esc(r)}">`).join("")}</datalist>
+      <fieldset class="edset"><legend>الحسابات</legend><div id="accRows">${(accs.length?accs:[null]).map(accRow).join("")}</div>
+        <button type="button" class="btn sm" data-act="accAdd">${UI.plus} إضافة حساب</button></fieldset>
+      <fieldset class="edset"><legend>الأسعار (ر.س)</legend>
+        <div class="ptab-ed"><span></span><span class="lbl">السعر الرسمي</span><span class="lbl">سعر أوت مارك</span>
+        ${Object.keys(TYPES).map(t=>`<span class="lbl">${TYPES[t]}</span><input class="inp num" name="${t}Sell" inputmode="numeric" aria-label="السعر الرسمي ${TYPES[t]}" value="${v(p[t]&&p[t].sell)}"><input class="inp num" name="${t}Cost" inputmode="numeric" aria-label="سعر أوت مارك ${TYPES[t]}" value="${v(p[t]&&p[t].cost)}">`).join("")}</div>
+        <p class="muted-note" style="font-size:12px">اترك الخانة فارغة إذا لم يكن السعر معروفًا.</p></fieldset>
+      <label class="fld">عدد المتابعين<input class="inp" name="followers" value="${v(i&&i.followers)}"></label>
+      <label class="fld">الملاحظات<textarea class="inp" name="notes" rows="3">${v(i&&i.notes)}</textarea></label>
+      <p class="err" id="edErr" hidden></p>
+      <div class="frow"><button class="btn primary" type="submit">${isNew?"إضافة إلى القائمة":"حفظ التعديلات"}</button><button class="btn ghost" type="button" data-act="edCancel">إلغاء</button></div>
+    </div></form>`;
+  setTimeout(()=>{const f=d.querySelector("input:not([type=hidden]),select");f&&f.focus();},0);
+}
+async function saveEditor(f){
+  const g=n=>(f.elements[n]?.value||"").trim(),err=$("edErr");
+  const id=state.profile,isNew=id==="__new",old=isNew?null:state.lib.find(x=>x.id===id);
+  const fail=m=>{err.textContent=m;err.hidden=false;};
+  if(!isNew&&!old)return fail("لم يعد هذا المؤثر موجودًا في القائمة.");
+  const name=isNew?g("name").replace(/\s+/g," "):old.name;
+  if(!name)return fail("أدخل اسم المؤثر.");
+  if(isNew&&state.lib.some(x=>x.id==="p|"+name))return fail("يوجد مؤثر بهذا الاسم في القائمة. افتح ملفه وعدّل بياناته.");
+  const accounts=[];let bad="";
+  f.querySelectorAll(".acc-row").forEach(r=>{const p=r.querySelector("[name=accP]").value,raw=r.querySelector("[name=accL]").value.trim(),h=raw.replace(/^@/,"");
+    let l=cleanLink(raw);
+    if(!l&&raw&&/^[\w.\-]{2,40}$/.test(h)&&PROFILE_URL[p])l=PROFILE_URL[p](h); // a bare username → profile link
+    if(raw&&!l){bad=bad||raw;return;}
+    if(l||p!=="غير محدد")accounts.push({platform:platFromLink(l)||p,link:l});});
+  if(bad)return fail(`«${bad}» ليس رابطًا صحيحًا. الصق رابط الحساب كاملًا، أو اسم المستخدم فقط.`);
+  const num=n=>{const x=parseNum(g(n));return x!=null&&x>0?x:null;};
+  const prices={home:{sell:num("homeSell"),cost:num("homeCost")},cover:{sell:num("coverSell"),cost:num("coverCost")}};
+  const anyPrice=Object.values(prices).some(x=>x.sell!=null||x.cost!=null);
+  const base={name,region:g("region"),category:g("category"),access:g("access"),phone:g("phone"),notes:(f.elements.notes.value||"").trim(),
+    followers:g("followers"),accounts,platform:accounts[0]?.platform||(old&&old.platform)||"غير محدد"};
+  const it=!anyPrice&&old&&isDeal(old)?mkItem(Object.assign(base,{cost:0,sell:0,costSrc:"sheet",sellSrc:"sheet",deal:"product"}))
+    :mkItem(Object.assign(base,{prices}));
+  if(isNew)state.lib.push(it);else state.lib[state.lib.indexOf(old)]=it;
+  f.querySelector("[type=submit]").disabled=true;
+  state.editing=false;state.profile=it.id;renderAll();
+  const shared=await saveLib();renderAll();
+  toast((isNew?`أُضيف ${name} إلى القائمة`:`حُفظت بيانات ${name}`)+(shared?" للفريق":state.db?" · تعذّر الحفظ للفريق، حُفظ على هذا المتصفح":""));
+}
+$("addInf").addEventListener("click",()=>{state.profile="__new";state.editing=true;renderProfile();});
+$("drawer").addEventListener("submit",e=>{if(e.target.id==="edForm"){e.preventDefault();saveEditor(e.target);}});
+
 // ---------- import ----------
 function openImport(open){$("importPanel").hidden=!open;$("openImport").setAttribute("aria-expanded",open);if(open)$("importPanel").scrollIntoView({behavior:"smooth",block:"nearest"});}
 $("openImport").addEventListener("click",()=>openImport($("importPanel").hidden));
@@ -1210,25 +1488,129 @@ $("file").addEventListener("change",e=>{const f=e.target.files[0];if(f)readFile(
 function readFile(file){
   if(!window.XLSX){toast("تعذّر تحميل مكتبة Excel. حدّث الصفحة وحاول مجددًا.");return;}
   const rd=new FileReader();
-  rd.onload=async()=>{try{
-      const wb=XLSX.read(new Uint8Array(rd.result),{type:"array"});
-      const single=(document.querySelector("input[name=single]:checked")||{}).value||"cost";
-      const res=parseWorkbook(wb,single);
-      if(!res.items.length){toast("لم يُعثر على صف عناوين يحتوي «المشهور» أو «الاسم» مع عمود سعر. راجع العناوين وحاول مجددًا.");return;}
-      state.lib=res.items;state.libSource="local";store.set("inf-lib3",{rows:res.items.map(pack)});state.shown=PAGE;
-      renderAll();openImport(false);
-      let shared=false;try{shared=await writeLibrary(res.items);}catch(err){shared=false;}
-      if(shared)state.libSource="db";
-      renderAll();
-      toast(`حُمّل ${fmt(res.items.length)} مؤثر من ${res.sheets} ورقة`+(res.noLink?` · ${fmt(res.noLink)} بلا رابط`:"")+(shared?" · حُفظ للفريق":""));
-    }catch(err){console.error(err);toast("تعذّرت قراءة الملف كملف Excel.");}};
+  rd.onload=()=>{let wb;try{wb=XLSX.read(new Uint8Array(rd.result),{type:"array"});}catch(err){console.error(err);toast("تعذّرت قراءة الملف كملف Excel.");return;}
+    handleWorkbook(wb,file.name);};
   rd.readAsArrayBuffer(file);
 }
+// a Google Sheets link → its xlsx export (keeps the hyperlinks on the names; csv would drop them)
+function sheetExportUrl(u){u=String(u||"").trim();
+  const m=u.match(/\/spreadsheets\/d\/([\w-]{20,})/)||u.match(/\/file\/d\/([\w-]{20,})/)||u.match(/[?&]id=([\w-]{20,})/);
+  return m?`https://docs.google.com/spreadsheets/d/${m[1]}/export?format=xlsx`:null;}
+$("sheetUrl").value=store.get("inf-sheet-url")||"";
+$("sheetForm").addEventListener("submit",async e=>{e.preventDefault();
+  if(!window.XLSX){toast("تعذّر تحميل مكتبة Excel. حدّث الصفحة وحاول مجددًا.");return;}
+  const raw=$("sheetUrl").value,url=sheetExportUrl(raw);
+  if(!url){toast("هذا ليس رابط Google Sheets. انسخ الرابط من شريط العنوان والشيت مفتوح.");$("sheetUrl").focus();return;}
+  const btn=$("sheetGo");btn.disabled=true;btn.textContent="جارٍ القراءة…";
+  try{
+    const r=await fetch(url,{cache:"no-store"});
+    if(!r.ok||/text\/html/i.test(r.headers.get("content-type")||""))throw new Error("closed");
+    const wb=XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:"array"});
+    store.set("inf-sheet-url",raw.trim());
+    handleWorkbook(wb,"Google Sheets");
+  }catch(err){console.error(err);toast("تعذّرت قراءة الشيت. تأكد أن مشاركته «أي شخص لديه الرابط» ثم حاول مجددًا.");}
+  finally{btn.disabled=false;btn.textContent="قراءة الرابط";}
+});
+
+// ---------- import: preview, then add to (or replace) the list ----------
+let pending=null; // {items, source, sheets, noLink, noPrice}
+const importMode=()=>(document.querySelector("input[name=imode]:checked")||{}).value||"add";
+document.querySelectorAll("input[name=imode]").forEach(r=>r.addEventListener("change",()=>{if(pending)renderImportPreview();}));
+function handleWorkbook(wb,source){
+  const single=(document.querySelector("input[name=single]:checked")||{}).value||"cost";
+  const res=parseWorkbook(wb,single);
+  if(!res.items.length){pending=null;$("impPreview").hidden=true;
+    toast("لم يُعثر على صف عناوين يحتوي «المشهور» أو «الاسم» مع عمود سعر. راجع العناوين وحاول مجددًا.");return;}
+  pending=Object.assign(res,{source});
+  renderImportPreview();
+  $("impPreview").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+const cloneItem=i=>unpack(pack(i));
+const priceLabel=i=>isDeal(i)?DEAL_TXT:fmt(i.sell);
+// fold one incoming person into an existing one; returns what changed (in words)
+function mergeInto(ex,it){
+  const ch=[];
+  if(it.prices){
+    if(isDeal(ex)||JSON.stringify(normPrices(ex.prices))!==JSON.stringify(normPrices(it.prices))){
+      ch.push("الأسعار");ex.prices=normPrices(it.prices);ex.deal="";applyType(ex,firstType(ex));}}
+  // a product-only row never wipes a real price
+  else if(!isDeal(it)&&(isDeal(ex)||it.sell!==ex.sell||(it.costSrc==="sheet"&&it.cost!==ex.cost))){
+    ch.push(`السعر ${priceLabel(ex)} ← ${priceLabel(it)}`);
+    Object.assign(ex,{cost:it.cost,sell:it.sell,costSrc:it.costSrc,sellSrc:it.sellSrc,deal:"",prices:null});}
+  const accs=accountsOf(ex).map(a=>({...a})),fresh=[];
+  for(const a of it.accounts)if(!accs.some(b=>a.link?b.link===a.link:(b.platform===a.platform)))accs.push(a),fresh.push(a.platform);
+  if(fresh.length)ch.push("حساب جديد: "+[...new Set(fresh)].join("، "));
+  ex.accounts=accs.filter(a=>a.link||!accs.some(b=>b.link&&b.platform===a.platform)); // a real link replaces an empty one
+  if(it.region!=="غير محدد"&&it.region!==ex.region){ch.push(`المنطقة ${ex.region} ← ${it.region}`);ex.region=it.region;}
+  if(it.category&&it.category!==ex.category){ch.push(`الفئة ${ex.category||"—"} ← ${it.category}`);ex.category=it.category;ex.catSrc="sheet";}
+  if(it.followers&&it.followers!==ex.followers){ch.push("المتابعين");ex.followers=it.followers;}
+  for(const [k,l] of [["access","طريقة الوصول"],["phone","رقم التواصل"],["notes","الملاحظات"]])if(it[k]&&it[k]!==ex[k]){ch.push(l);ex[k]=it[k];}
+  ex.platform=ex.accounts[0]?.platform||ex.platform;ex.link=ex.accounts.find(a=>a.link)?.link||"";
+  return ch;
+}
+function planImport(incoming,mode){
+  const sample=state.libSource==="sample",base=sample?[]:state.lib,byId=new Map(base.map(i=>[i.id,i]));
+  const added=[],updated=[],touched=new Map();let same=0;
+  for(const it of incoming){const ex=byId.get(it.id);
+    if(!ex){added.push(it);continue;}
+    const c=cloneItem(ex),ch=mergeInto(c,it);touched.set(it.id,c);
+    if(ch.length)updated.push({item:c,ch});else same++;}
+  let result,removed=[];
+  if(mode==="replace"){const inc=new Set(incoming.map(i=>i.id));result=incoming;removed=base.filter(i=>!inc.has(i.id));}
+  else result=base.map(i=>touched.get(i.id)||i).concat(added);
+  return {added,updated,same,removed,result,sample};
+}
+function renderImportPreview(){
+  const el=$("impPreview");if(!pending){el.hidden=true;return;}
+  const mode=importMode(),pl=planImport(pending.items,mode),deals=pending.items.filter(isDeal).length;
+  const stat=(cls,k,v)=>`<div class="pv-stat ${cls}"><div class="k">${k}</div><div class="v num">${fmt(v)}</div></div>`;
+  const li=(i,extra)=>`<li><span class="nm">${esc(i.name)}</span>${platsOf(i).map(pico).join("")}<span class="ch">${esc(i.region)}</span><span class="num">${sellHtml(i)}</span>${extra?`<span class="ch">${esc(extra)}</span>`:""}</li>`;
+  const list=(title,arr,f,open)=>arr.length?`<details${open?" open":""}><summary>${title} (<span class="num">${fmt(arr.length)}</span>)</summary><ul class="pv-list">${arr.map(f).join("")}</ul></details>`:"";
+  const notes=[];
+  if(pl.sample)notes.push(`<p class="pv-note">القائمة الحالية بيانات تجريبية، وستُستبدل بالكامل بمؤثري الملف.</p>`);
+  if(pending.noPrice)notes.push(`<p class="pv-note">تُجوهل <span class="num">${fmt(pending.noPrice)}</span> صف فيه اسم بدون سعر.</p>`);
+  if(pending.noLink)notes.push(`<p class="pv-note"><span class="num">${fmt(pending.noLink)}</span> صف بدون رابط حساب.</p>`);
+  if(mode==="replace"&&pl.removed.length)notes.push(`<p class="pv-note warn">سيُحذف من القائمة <span class="num">${fmt(pl.removed.length)}</span> مؤثر غير موجود في الملف. الحملات المحفوظة لا تتأثر.</p>`);
+  const nothing=!pl.added.length&&!pl.updated.length&&!(mode==="replace"&&pl.removed.length)&&!pl.sample;
+  el.innerHTML=`<div class="pv-head"><b>معاينة قبل الحفظ</b><span>${esc(pending.source)} · <span class="num">${fmt(pending.items.length)}</span> مؤثر من <span class="num">${fmt(pending.sheets)}</span> ورقة${deals?` · <span class="num">${fmt(deals)}</span> ${DEAL_TXT}`:""}</span></div>
+    <div class="pv-stats">${stat("new","مؤثرون جدد",pl.added.length)}${stat("upd","سيُحدَّثون",pl.updated.length)}${stat("","بدون تغيير",pl.same)}${mode==="replace"&&!pl.sample?stat("del","سيُحذفون",pl.removed.length):""}</div>
+    ${list("الجدد",pl.added,i=>li(i),true)}
+    ${list("التحديثات",pl.updated,u=>li(u.item,u.ch.join(" · ")),!pl.added.length)}
+    ${mode==="replace"?list("سيُحذفون",pl.removed,i=>li(i),false):""}
+    ${notes.join("")}
+    <div class="frow">${nothing?`<span class="pv-note">لا جديد في هذا الملف، فالقائمة مطابقة له.</span>`:
+      `<button class="btn primary" type="button" id="impConfirm">${mode==="replace"?"استبدال القائمة":"إضافة وحفظ"}</button>`}
+      <button class="btn ghost" type="button" id="impCancel">إلغاء</button></div>`;
+  el.hidden=false;
+  $("impCancel").onclick=()=>{pending=null;el.hidden=true;};
+  const go=$("impConfirm");if(go)go.onclick=()=>confirmImport(go);
+}
+async function confirmImport(btn){
+  if(!pending)return;
+  const mode=importMode(),pl=planImport(pending.items,mode); // re-plan against the list as it is now (a teammate may have changed it)
+  btn.disabled=true;
+  state.lib=pl.result;state.libSource="local";store.set("inf-lib3",{rows:pl.result.map(pack)});state.shown=PAGE;
+  pending=null;$("impPreview").hidden=true;renderAll();openImport(false);
+  let shared=false;try{shared=await writeLibrary(pl.result);}catch(err){console.error(err);shared=false;}
+  if(shared)state.libSource="db";
+  renderAll();
+  const parts=[];if(pl.added.length)parts.push(`أُضيف ${fmt(pl.added.length)} مؤثر`);if(pl.updated.length)parts.push(`حُدِّث ${fmt(pl.updated.length)}`);
+  if(mode==="replace"&&pl.removed.length)parts.push(`حُذف ${fmt(pl.removed.length)}`);
+  toast((parts.join(" · ")||"حُفظت القائمة")+` · الإجمالي ${fmt(pl.result.length)}`+(shared?" · حُفظ للفريق":state.db?" · تعذّر الحفظ للفريق، حُفظ على هذا المتصفح":""));
+}
 function mapHeader(texts){
-  const c={accCols:[]};
+  const c={accCols:[],hdr:texts.slice()};
   texts.forEach((t,k)=>{if(!t)return;
-    if(c.name==null&&/^(المشهور|المشاهير|الاسم|اسم المشهور|اسم المؤثر|المؤثر|اسم الحساب)$/.test(t))c.name=k;
+    if(/^(تاريخ|رابط|لينك)\s*(ال)?[إا]علان|^(ال)?[إا]عتماد$|^(ال)?[إا]علان$/.test(t))return; // per-campaign columns, not about the influencer
+    if(c.name==null&&/^(المشهور|المشاهير|الاسم|اسم المشهور|اسم ال(مؤثر|موثر)[ةه]?|ال(مؤثر|موثر)[ةه]?|اسم الحساب)$/.test(t))c.name=k;
     else if(c.cat==null&&/^(ال)?(فئة|فئه|تصنيف)|^category$|^class$/i.test(t))c.cat=k;
+    // team sheet prices: «السعر الرسمي منزلي», «السعر لاوت مارك تغطية», «السعر تغطية حضورية»…
+    else if(/(سعر|قيمة|تكلف|مبلغ)/.test(t)&&/(منزل|تغطي|حضور|الرسمي|[اأإ]وت ?مارك|outmark)/i.test(t)){
+      const type=/تغطي|حضور/.test(t)?"cover":"home",who=/([اأإ]وت ?مارك|outmark|تكلف)/i.test(t)?"cost":"sell";
+      c.prices=c.prices||{home:{},cover:{}};if(c.prices[type][who]==null)c.prices[type][who]=k;}
+    else if(c.notes==null&&/ملاحظ/.test(t))c.notes=k;
+    else if(c.access==null&&/(طريق[ةه]\s*ال?وصول|الوسيط|الوكال[ةه])/.test(t))c.access=k;
+    else if(c.phone==null&&/(رقم|جوال|هاتف|واتس|^التواصل)/.test(t))c.phone=k;
     else if(t.length<24&&!/^منص/.test(t)&&!/(سعر|تكلف|قيمة|مبلغ|متابع)/.test(t)&&normPlatform(t))c.accCols.push({k,platform:normPlatform(t)}); // e.g. a «سناب» column full of links
     else if(c.link==null&&/^(ال)?(حساب|حسابات|رابط|روابط|لينك|لينكات)/.test(t))c.link=k;
     else if(c.sell==null&&/(سعر البيع|سعر العميل|البيع|للعميل)/.test(t))c.sell=k;
@@ -1237,41 +1619,98 @@ function mapHeader(texts){
     else if(c.platform==null&&/^(المنصة|المنصه|منصة|منصه)$/.test(t))c.platform=k;
     else if(c.link==null&&/(بروفايل|رابط الحساب|لينك الحساب|رابط المشهور|profile)/i.test(t))c.link=k;
     else if(c.followers==null&&/متابع/.test(t))c.followers=k;});
+  // a lone «الحساب» column (no «المشهور») holds the name, with the profile link on it
+  if(c.name==null&&c.link!=null&&/^(ال)?حساب$/.test(texts[c.link]||"")){c.name=c.link;c.link=null;}
   return c;
 }
+const DEAL_SECTION=/مقابل\s*(ال)?منتج|UGC|بدون\s*مقابل|تبادل/i;
+const BIDI=/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g;
+const arDigits=s=>String(s).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+function toNum(tok){tok=arDigits(tok).replace(/[،٬]/g,",");
+  if(/^\d{1,3}(,\d{3})*,\d{2}$/.test(tok))tok=tok.replace(/,(\d{2})$/,".$1"); // «35,000,00» means 35,000.00
+  const n=parseFloat(tok.replace(/,/g,""));return isFinite(n)?n:null;}
+// a price cell → {n, note}: «18000 اعلانين» → 18000 and «اعلانين»; «لم يتم الرد» → no price, kept as a note
+function cellPrice(cell){
+  if(!cell||cell.v==null||cell.v==="")return {n:null,note:""};
+  if(typeof cell.v==="number")return {n:cell.v>0?cell.v:null,note:""};
+  const s=arDigits(String(cell.v).replace(BIDI,"")).trim(),m=s.match(/\d[\d,،٬.]*\d|\d/);
+  const n=m?toNum(m[0]):null,note=(m?s.replace(m[0],""):s).replace(/[()]/g," ").replace(/\s+/g," ").trim();
+  return {n:n>0?n:null,note};}
+// phone numbers arrive as numbers (547901230) or text with hidden direction marks; Saudi mobiles get their leading 0 back
+function cellPhone(cell){if(!cell||cell.v==null||cell.v==="")return"";
+  if(typeof cell.v==="number"){const s=String(Math.round(cell.v));return /^5\d{8}$/.test(s)?"0"+s:s;}
+  const s=arDigits(String(cell.v).replace(BIDI,"")).replace(/\u00a0/g," ").replace(/\s+/g," ").trim(),d=s.replace(/[\s-]/g,"");
+  return /^5\d{8}$/.test(d)?"0"+d:/^\+?\d{9,14}$/.test(d)?d:s;}
+// a tab named after a region («الرياض», «جدة») gives its rows that region
+const tabRegion=sn=>{const s=String(sn||"").trim();return /^(sheet|ورقة)?\s*\d*$/i.test(s)||normPlatform(s)||DEAL_SECTION.test(s)?"":s;};
+// same name on several rows / tabs → one person; the first row wins and later rows only fill what is missing
+function mergeFill(items){
+  const m=new Map();
+  for(const it of items){const ex=m.get(it.id);if(!ex){m.set(it.id,it);continue;}
+    for(const a of it.accounts){const dup=a.link?ex.accounts.some(b=>b.link===a.link||(b.link&&b.platform===a.platform)):ex.accounts.some(b=>b.platform===a.platform);if(!dup)ex.accounts.push(a);}
+    ex.accounts=ex.accounts.filter(a=>a.link||!ex.accounts.some(b=>b.link&&b.platform===a.platform));
+    if(it.prices){if(!ex.prices)ex.prices=normPrices(it.prices);
+      else for(const t in TYPES)for(const w of ["sell","cost"])if(ex.prices[t][w]==null&&it.prices[t][w]!=null)ex.prices[t][w]=it.prices[t][w];
+      applyType(ex,firstType(ex));}
+    else if(!ex.prices&&(it.sell||0)>(ex.sell||0))Object.assign(ex,{cost:it.cost,sell:it.sell,costSrc:it.costSrc,sellSrc:it.sellSrc,deal:it.deal||""});
+    if(ex.region==="غير محدد"&&it.region!=="غير محدد")ex.region=it.region;
+    if(!ex.category&&it.category){ex.category=it.category;ex.catSrc=it.catSrc;}
+    for(const k of ["followers","access","phone","notes"])if(!ex[k]&&it[k])ex[k]=it[k];
+    ex.platform=ex.accounts[0]?.platform||ex.platform;ex.link=ex.accounts.find(a=>a.link)?.link||"";}
+  return [...m.values()];
+}
 function parseWorkbook(wb,single){
-  const out=[];let sheets=0,noLink=0;
+  const out=[];let sheets=0,noLink=0,noPrice=0;
   for(const sn of wb.SheetNames){
     const ws=wb.Sheets[sn];if(!ws||!ws["!ref"])continue;
-    const R=XLSX.utils.decode_range(ws["!ref"]);let cols=null,platform=normPlatform(sn),got=0;
+    const R=XLSX.utils.decode_range(ws["!ref"]);let cols=null,platform=normPlatform(sn),deal=DEAL_SECTION.test(sn),region=tabRegion(sn),got=0;
+    const mergedRows=new Set((ws["!merges"]||[]).filter(m=>m.e.c-m.s.c>=2).map(m=>m.s.r));
     for(let r=R.s.r;r<=R.e.r;r++){
       const cells=[],texts=[];
-      for(let c=R.s.c;c<=R.e.c;c++){const cell=ws[XLSX.utils.encode_cell({r,c})];cells[c]=cell;texts[c]=cell?String(cell.w??cell.v??"").trim():"";}
-      const sec=texts.find(t=>t&&/^منص[ةه]\s+\S/.test(t)&&t.length<30);if(sec){const p=normPlatform(sec);if(p)platform=p;}
-      const h=mapHeader(texts);if(h.name!=null&&(h.cost!=null||h.sell!=null)){cols=h;
+      for(let c=R.s.c;c<=R.e.c;c++){const cell=ws[XLSX.utils.encode_cell({r,c})];cells[c]=cell;texts[c]=cell?String(cell.w??cell.v??"").replace(BIDI,"").trim():"";}
+      const filled=texts.filter(Boolean);
+      // section title like «منصة سناب شات» or «منصة تيك توك معلنين مقابل منتج UGC»
+      const sec=texts.find(t=>t&&/^منص[ةه]\s+\S/.test(t)&&t.length<70);
+      if(sec){const p=normPlatform(sec);if(p)platform=p;const d=DEAL_SECTION.test(sec);if(d!==deal){deal=d;cols=null;}}
+      // region title inside a tab: «منطقة الرياض», or a lone title across a merged row («الخرج», «تبوك»)
+      else if(filled.length===1&&filled[0].length<40&&(/^منطق[ةه]\s+\S/.test(filled[0])||mergedRows.has(r))){region=filled[0].replace(/^منطق[ةه]\s+/,"").trim();continue;}
+      const h=mapHeader(texts);if(h.name!=null&&(h.cost!=null||h.sell!=null||h.prices||deal)){cols=h;
         if(cols.sell==null&&cols.cost!=null&&single==="sell"){cols.sell=cols.cost;cols.cost=null;}continue;}
       if(!cols)continue;
       const name=(texts[cols.name]||"").replace(/\s+/g," ").trim();
       if(!name||/(اجمال|إجمال|المجموع)/.test(name))continue;
-      const cost=cols.cost!=null?parseNum(cells[cols.cost]?.v):null,sell=cols.sell!=null?parseNum(cells[cols.sell]?.v):null;
-      if((cost==null||cost<=0)&&(sell==null||sell<=0))continue;
-      const pf=cols.platform!=null?(normPlatform(texts[cols.platform])||texts[cols.platform]):platform;
+      const pf=cols.platform!=null?(normPlatform(texts[cols.platform])||texts[cols.platform]||platform):platform;
       const cellLinks=k=>{const c=cells[k];return [...new Set([cleanLink(c?.l?.Target),...splitLinks(texts[k])].filter(Boolean))];};
       const accounts=[];
       if(cols.link!=null)for(const l of cellLinks(cols.link))accounts.push({platform:platFromLink(l)||pf,link:l});
-      for(const ac of cols.accCols){const ls=cellLinks(ac.k),h=(texts[ac.k]||"").trim().replace(/^@/,"");
+      for(const ac of cols.accCols){const ls=cellLinks(ac.k),hd=(texts[ac.k]||"").trim().replace(/^@/,"");
         if(ls.length)for(const l of ls)accounts.push({platform:ac.platform,link:l});
-        else if(/^[\w.\-]{2,40}$/.test(h)&&PROFILE_URL[ac.platform])accounts.push({platform:ac.platform,link:PROFILE_URL[ac.platform](h)});} // bare username → profile link
+        else if(/^[\w.\-]{2,40}$/.test(hd)&&PROFILE_URL[ac.platform])accounts.push({platform:ac.platform,link:PROFILE_URL[ac.platform](hd)});} // bare username → profile link
       if(!accounts.length){const l=cleanLink(cells[cols.name]?.l?.Target);if(l)accounts.push({platform:platFromLink(l)||pf,link:l});}
       if(!accounts.length)noLink++;
-      const it=mkItem({name,platform:pf||"غير محدد",accounts,region:cols.region!=null?texts[cols.region]:"",
-        category:cols.cat!=null?texts[cols.cat]:"",
-        followers:cols.followers!=null?texts[cols.followers]:"",cost:cost>0?cost:null,sell:sell>0?sell:null});
+      const base={name,platform:pf||"غير محدد",accounts,region:cols.region!=null?texts[cols.region]:region,
+        category:cols.cat!=null?texts[cols.cat]:"",followers:cols.followers!=null?texts[cols.followers]:"",
+        access:cols.access!=null?texts[cols.access]:"",phone:cols.phone!=null?cellPhone(cells[cols.phone]):""};
+      const notes=[cols.notes!=null?texts[cols.notes]:""];
+      let it;
+      if(cols.prices){ // team sheet: every name is kept, even with no price yet (it can be filled in later)
+        const prices={home:{},cover:{}};
+        for(const t of ["home","cover"])for(const w of ["sell","cost"]){const k=cols.prices[t][w];if(k==null)continue;
+          const pr=cellPrice(cells[k]);prices[t][w]=pr.n;if(pr.note)notes.push(`${cols.hdr[k]}: ${pr.note}`);}
+        it=mkItem(Object.assign(base,{prices,notes:notes.filter(Boolean).join(" · ")}));
+      }else{
+        const cost=cols.cost!=null?parseNum(cells[cols.cost]?.v):null,sell=cols.sell!=null?parseNum(cells[cols.sell]?.v):null;
+        const isFree=deal&&!(cost>0)&&!(sell>0);
+        if(!isFree&&(cost==null||cost<=0)&&(sell==null||sell<=0)){noPrice++;continue;}
+        base.notes=notes.filter(Boolean).join(" · ");
+        it=isFree?mkItem(Object.assign(base,{cost:0,sell:0,costSrc:"sheet",sellSrc:"sheet",deal:"product"}))
+          :mkItem(Object.assign(base,{cost:cost>0?cost:null,sell:sell>0?sell:null}));
+      }
       out.push(it);got++;
     }
     if(got)sheets++;
   }
-  return {items:mergeByName(out),sheets,noLink};
+  return {items:mergeFill(out),sheets,noLink,noPrice};
 }
 
 // ---------- PDF export (table drawn on canvas so Arabic shapes correctly, then placed on A4 landscape pages) ----------
@@ -1285,6 +1724,7 @@ function fitText(ctx,s,max){s=String(s??"");if(ctx.measureText(s).width<=max)ret
 const shortUrl=u=>String(u||"").replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,"");
 function pdfColumns(internal,items){
   const cols=[{k:"name",l:"اسم المؤثر",w:1.7,a:"start",b:true},{k:"accs",l:"الحسابات والروابط",w:3,a:"start"},{k:"cat",l:"الفئة",w:.55,a:"center"},{k:"region",l:"المنطقة",w:1,a:"center"}];
+  if(items.some(i=>i.prices))cols.push({k:"type",l:"نوع الإعلان",w:.75,a:"center"});
   if(items.some(i=>fmtFollowers(i.followers)))cols.push({k:"followers",l:"المتابعين",w:.85,a:"center"});
   cols.push({k:"sell",l:"قيمة الإعلان (ر.س)",w:1.25,a:"end",n:true});
   if(internal)cols.push({k:"cost",l:"التكلفة",w:1.05,a:"end",n:true},{k:"profit",l:"الربح",w:1,a:"end",n:true});
@@ -1295,9 +1735,9 @@ function pdfColumns(internal,items){
 function pdfRows(internal){
   const items=state.cart,g=groups(items),rows=[];
   for(const [p,arr] of g)for(const i of arr){const accs=accountsOf(i).map(a=>({label:a.platform,key:pk(a.platform),url:cleanLink(a.link)}));
-    rows.push({t:"item",name:i.name,cat:p,region:i.region,followers:fmtFollowers(i.followers),accs,
-      h:Math.max(PDF.rowH,14+Math.max(1,accs.length)*PDF.lineH),sell:i.sell,cost:i.cost,profit:(i.sell||0)-(i.cost||0)});}
-  if(g.size>1)for(const [p,arr] of g){const s=totals(arr);rows.push({t:"sub",name:`إجمالي الفئة ${p}`,sell:s.sell,cost:s.cost,profit:s.profit});}
+    rows.push({t:"item",name:i.name,cat:p,type:i.prices?TYPES[i.type||firstType(i)]:"",region:i.region,followers:fmtFollowers(i.followers),accs,
+      h:Math.max(PDF.rowH,14+Math.max(1,accs.length)*PDF.lineH),sell:isDeal(i)?DEAL_TXT:i.sell,cost:isDeal(i)?"—":i.cost,profit:isDeal(i)?"—":(i.sell||0)-(i.cost||0)});}
+  if(g.size>1)for(const [p,arr] of g){const s=totals(arr);rows.push({t:"sub",name:`إجمالي ${catName(p)}`,sell:s.sell,cost:s.cost,profit:s.profit});}
   const t=totals(items);rows.push({t:"total",name:"الإجمالي الكلي",sell:t.sell,cost:t.cost,profit:t.profit});
   if(state.budget!=null){const rem=state.budget-t.sell;
     rows.push({t:"sub",name:"ميزانية العميل",sell:state.budget});
@@ -1369,7 +1809,7 @@ async function buildPdf(internal){
             addLink(x-w,ly2-9,w,18,a.url);});
           return;}
         let v=r[col.k];if(v==null||v===""){if(r.t!=="item")return;v="—";}
-        if(col.n)v=fmt(v);
+        if(col.n&&typeof v==="number")v=fmt(v);
         c.fillStyle=color;c.font=`${(col.b||bold)?600:400} 14.5px ${F}`;
         if(col.a==="start"){c.textAlign="right";c.fillText(fitText(c,v,col.px-2*pad),col.x1-pad,mid);}
         else if(col.a==="end"){c.textAlign="left";c.fillText(fitText(c,v,col.px-2*pad),col.x0+pad,mid);}
@@ -1412,7 +1852,7 @@ $("expInternal").addEventListener("click",e=>exportPdf(true,e.currentTarget));
 $("copyTable").addEventListener("click",()=>{
   const items=state.cart,t=totals(items),internal=state.internal;
   const lines=[["#","اسم المؤثر","الحسابات","الفئة","المنطقة","قيمة الإعلان"].concat(internal?["التكلفة"]:[]).join("	")];
-  items.forEach((i,k)=>lines.push([k+1,i.name,accountsOf(i).map(a=>cleanLink(a.link)||a.platform).join(" "),i.category||"",i.region,i.sell].concat(internal?[i.cost]:[]).join("	")));
+  items.forEach((i,k)=>lines.push([k+1,i.name,accountsOf(i).map(a=>cleanLink(a.link)||a.platform).join(" "),i.category||"",i.region,isDeal(i)?DEAL_TXT:i.sell].concat(internal?[isDeal(i)?"":i.cost]:[]).join("	")));
   lines.push(["","الإجمالي","","","",t.sell].concat(internal?[t.cost]:[]).join("	"));
   const text=lines.join("\n");
   const fallback=()=>{const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
