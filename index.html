@@ -194,6 +194,36 @@ button.ty{cursor:pointer;color:var(--accent);border-color:var(--accent);font-wei
 
 /* list */
 .list{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+/* the influencer table: same columns as the team sheet; scrolls sideways, «+» and the name stay pinned on the right */
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.itab{border-collapse:separate;border-spacing:0;width:100%;min-width:1480px;font-size:14px}
+.itab th,.itab td{padding:9px 10px;border-top:1px solid var(--line);text-align:right;vertical-align:middle;background:var(--surface);white-space:nowrap}
+.itab thead th{border-top:0;background:var(--sunken);font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.2px;position:sticky;top:0;z-index:2;white-space:normal;line-height:1.35;min-width:74px}
+.itab .c-add{position:sticky;right:0;z-index:1;width:52px;min-width:52px;padding-inline:10px 4px}
+.itab .c-name{position:sticky;right:52px;z-index:1;min-width:170px;max-width:220px;white-space:normal;box-shadow:-1px 0 0 var(--line)}
+.itab thead .c-add,.itab thead .c-name{z-index:3}
+.itab .c-num{text-align:left;font-variant-numeric:tabular-nums}
+.itab th.c-num{text-align:left}
+.itab .c-ed{width:44px;padding-inline:4px 10px}
+.itab tbody tr:hover td{background:var(--sunken)}
+.itab tr.sel td{background:var(--accent-soft)}
+.itab tr.picked td{background:var(--danger-soft)}
+.itab tr.sel .add{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.itab tr.picked .add.pick,.itab tr.sel.picked .add.pick{background:var(--danger);border-color:var(--danger);color:#fff}
+.itab .add.pick{border-radius:7px}
+.itab .nameBtn{font-weight:600;text-align:right;white-space:normal}
+.itab .c-name .sub{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:12px;color:var(--muted);margin-top:2px}
+.itab td.over .num{color:var(--danger)}
+.itab .dash{color:var(--line)}
+.itab .accs{flex-wrap:nowrap}
+.itab .acc{max-width:190px}
+.itab .pt{display:inline-flex;align-items:center;gap:6px}
+.itab .pt .pico{width:20px;height:20px;font-size:11px;border-radius:6px}
+.itab .note{display:inline-block;max-width:220px;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;color:var(--muted);font-size:13px}
+.itab .ptxt{font-size:13px;color:var(--muted);white-space:normal;display:inline-block;max-width:170px}
+.itab .tel{color:inherit;font-variant-numeric:tabular-nums}
+.edBtn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.edBtn:hover{border-color:var(--accent);color:var(--accent)}
 .row{display:grid;grid-template-columns:44px minmax(0,1.5fr) minmax(0,1.6fr) 52px minmax(0,.9fr) 92px 100px;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line)}
 .client-mode .row{grid-template-columns:44px minmax(0,1.5fr) minmax(0,1.6fr) 52px minmax(0,.9fr) 100px}
 /* accounts column: one pill per account, each opens that account */
@@ -495,7 +525,7 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
   </header>
 
   <div class="notice" id="sampleNotice">
-    <span><b>بيانات تجريبية:</b> أسماء وأسعار وهمية للعرض فقط. سعر البيع محسوب على أساس التكلفة + <span id="mNote" class="num">20</span>%. ارفع ملف المؤثرين الخاص بك للعمل عليه.</span>
+    <span><b>بيانات تجريبية:</b> أسماء وأسعار وهمية للعرض فقط. ارفع ملف المؤثرين الخاص بك للعمل عليه.</span>
     <button class="link" id="noticeImport">ارفع ملف المؤثرين</button>
   </div>
 
@@ -525,19 +555,9 @@ body.locked #app,body.locked .cart-bar,body.locked .drawer,body.locked .scrim{di
             <label><input type="radio" name="imode" value="replace"><span>استبدال القائمة بالكامل</span></label>
           </div>
         </div>
-        <div style="display:grid;gap:6px">
-          <span class="lbl">إذا احتوى الملف على عمود سعر واحد فقط، فهو:</span>
-          <div class="radio" role="radiogroup">
-            <label><input type="radio" name="single" value="cost" checked><span>تكلفة المؤثر</span></label>
-            <label><input type="radio" name="single" value="sell"><span>سعر البيع للعميل</span></label>
-          </div>
-        </div>
-        <label class="f">نسبة الهامش الافتراضية % (عند غياب سعر البيع أو التكلفة)
-          <input class="inp" id="margin" type="number" min="0" max="500" step="1" value="20" style="max-width:120px">
-        </label>
       </div>
     </div>
-    <p class="hint">يتعرّف النظام على صف العناوين تلقائيًا: <b>اسم المؤثر</b>، <b>الفئة</b> (A أو B أو C)، <b>السعر الرسمي</b> و<b>سعر أوت مارك</b> للإعلان المنزلي والتغطية، <b>المنصة</b>، <b>طريقة الوصول</b>، <b>رقم التواصل</b>، <b>رابط الحساب</b>، و<b>الملاحظات</b>. المنطقة تؤخذ من عمود «المنطقة» أو من اسم الورقة أو من عناوين «منطقة …» داخلها. الملف الذي فيه عمود سعر واحد فقط (مثل «قيمة الإعلان») يُقرأ حسب الاختيار أعلاه. الاسم المكرّر يُدمج في مؤثر واحد، وتُكمَّل بياناته الناقصة من الصفوف الأخرى. الخانات الفارغة تبقى فارغة، وتُضاف لاحقًا من «تعديل البيانات» في ملف المؤثر. أقسام «مقابل منتج / UGC» تُضاف بدون سعر. في وضع الإضافة يُعرَف المؤثر الموجود من اسمه ويُحدَّث، ولا يُحذف أحد. تظهر معاينة قبل الحفظ، وبعد التأكيد تُحفظ القائمة لكل الفريق.</p>
+    <p class="hint">يتعرّف النظام على صف العناوين تلقائيًا: <b>اسم المؤثر</b>، <b>الفئة</b> (A أو B أو C)، <b>السعر الرسمي</b> و<b>سعر أوت مارك</b> للإعلان المنزلي والتغطية، <b>المنصة</b>، <b>طريقة الوصول</b>، <b>رقم التواصل</b>، <b>رابط الحساب</b>، و<b>الملاحظات</b>. المنطقة تؤخذ من عمود «المنطقة» أو من اسم الورقة أو من عناوين «منطقة …» داخلها. الملف الذي فيه عمود سعر واحد فقط (مثل «قيمة الإعلان») يُقرأ كسعر رسمي منزلي. لا تُحسب أي نسبة تلقائيًا: الأسعار كما في الجدول، والخانة الفارغة تبقى فارغة. الاسم المكرّر يُدمج في مؤثر واحد، وتُكمَّل بياناته الناقصة من الصفوف الأخرى. الخانات الفارغة تبقى فارغة، وتُضاف لاحقًا من «تعديل البيانات» في ملف المؤثر. أقسام «مقابل منتج / UGC» تُضاف بدون سعر. في وضع الإضافة يُعرَف المؤثر الموجود من اسمه ويُحدَّث، ولا يُحذف أحد. تظهر معاينة قبل الحفظ، وبعد التأكيد تُحفظ القائمة لكل الفريق.</p>
     <div class="preview" id="impPreview" hidden></div>
     <div class="frow">
       <button class="btn ghost" id="resetSample" hidden>استعادة البيانات التجريبية</button>
@@ -747,6 +767,7 @@ const ICONS={
 };
 const UI={
  plus:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>',
+ edit:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/></svg>',
  ok:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
  x:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6 6 18"/></svg>',
  ext:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
@@ -810,7 +831,7 @@ const posNum=x=>x!=null&&x!==""&&isFinite(+x)&&+x>0?+x:null;
 function normPrices(p){if(!p)return null;const s=t=>({sell:posNum(p[t]&&p[t].sell),cost:posNum(p[t]&&p[t].cost)});return {home:s("home"),cover:s("cover")};}
 const hasType=(i,t)=>!!(i&&i.prices&&i.prices[t]&&(i.prices[t].sell!=null||i.prices[t].cost!=null));
 const typesOf=i=>i&&i.prices?Object.keys(TYPES).filter(t=>hasType(i,t)):[];
-const firstType=i=>hasType(i,"home")?"home":hasType(i,"cover")?"cover":"home";
+const firstType=i=>{const p=i&&i.prices;if(!p)return"home";return p.home.sell!=null?"home":p.cover.sell!=null?"cover":p.cover.cost!=null&&p.home.cost==null?"cover":"home";};
 function applyType(it,t){const p=(it.prices&&it.prices[t])||{};it.type=t;
   it.sell=p.sell??p.cost??null;it.sellSrc=p.sell!=null?"sheet":"missing";
   it.cost=p.cost??p.sell??null;it.costSrc=p.cost!=null?"sheet":"missing";}
@@ -841,7 +862,7 @@ function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth
 // ---------- state ----------
 const blankOpen=()=>({id:null,name:"",client:"",status:"draft",savedSig:null});
 const state={lib:[],libSource:"sample",cart:[],open:blankOpen(),budget:null,
-  internal:true,margin:20,shown:PAGE,view:"home",camps:[],db:null,dbState:"loading",profile:null,editing:false,cf:{q:"",status:"all"},delMode:false,delSel:new Set(),
+  internal:true,shown:PAGE,view:"home",camps:[],db:null,dbState:"loading",profile:null,editing:false,cf:{q:"",status:"all"},delMode:false,delSel:new Set(),
   f:{q:"",platform:"all",region:"all",cat:"all",min:null,max:null,sort:"price-desc",fit:true}}; // fit: hide anyone priced above what is left of the budget
 
 // one item = one person; a person can hold several accounts (snap / tiktok / insta …)
@@ -852,9 +873,10 @@ function mkItem(o){
   const it={id:"p|"+o.name,name:o.name,accounts,platform:accounts[0]?.platform||o.platform||"غير محدد",link:accounts.find(a=>a.link)?.link||"",
     category:cat,catSrc:cat?"sheet":"none",region:String(o.region||"").trim()||"غير محدد",
     followers:o.followers||"",cost:o.cost??null,sell:o.sell??null,deal:o.deal||"",
-    access:o.access||"",phone:o.phone||"",notes:o.notes||"",prices:normPrices(o.prices),
+    access:o.access||"",phone:o.phone||"",notes:o.notes||"",
+    prices:normPrices(o.prices)||(o.deal?null:normPrices({home:{sell:o.sell,cost:o.cost}})), // a single old-style price is the official home price
     costSrc:o.costSrc||(o.cost!=null?"sheet":"derived"),sellSrc:o.sellSrc||(o.sell!=null?"sheet":"derived")};
-  if(it.prices)applyType(it,o.type&&hasType(it,o.type)?o.type:firstType(it));else derive(it);
+  if(it.prices)applyType(it,o.type&&hasType(it,o.type)?o.type:firstType(it));
   return it;
 }
 // same name on several rows / sheets → one person with all their accounts (keeps the higher price)
@@ -869,9 +891,6 @@ function mergeByName(items){
     ex.platform=ex.accounts[0]?.platform||ex.platform;ex.link=ex.accounts.find(a=>a.link)?.link||"";}
   return [...m.values()];
 }
-function derive(it){const m=1+state.margin/100;
-  if(it.sellSrc==="derived"&&it.cost!=null)it.sell=r50(it.cost*m);
-  if(it.costSrc==="derived"&&it.sell!=null)it.cost=Math.round(it.sell/m);}
 function sampleLib(){return SAMPLE.map(([name,platform,region,cost],k)=>{
   const ps=Object.keys(DEMO_URL),own=[platform];
   if(k%3===0)own.push(ps[(ps.indexOf(platform)+1)%3]); if(k%5===0)own.push(ps[(ps.indexOf(platform)+2)%3]);
@@ -888,7 +907,7 @@ const snapItem=i=>({id:i.id,name:i.name,platform:i.platform,accounts:accountsOf(
 
 // restore local conveniences
 (function restore(){
-  const s=store.get("inf-settings"); if(s){state.margin=+s.margin||20; state.internal=s.internal!==false;}
+  const s=store.get("inf-settings"); if(s){state.internal=s.internal!==false;}
   const lib=store.get("inf-lib3")||store.get("inf-lib2"); // lib2 = older one-row-per-platform format
   if(lib&&Array.isArray(lib.rows)&&(lib.rows.length||lib.emptied)){state.lib=mergeByName(lib.rows.map(unpack));state.libSource="local";}
   else state.lib=sampleLib();
@@ -896,7 +915,7 @@ const snapItem=i=>({id:i.id,name:i.name,platform:i.platform,accounts:accountsOf(
   if(d&&Array.isArray(d.cart)){state.cart=d.cart;state.open=Object.assign(blankOpen(),d.open||{});state.budget=d.budget??null;}
 })();
 function saveDraft(){store.set("inf-draft2",{cart:state.cart,open:state.open,budget:state.budget});}
-function saveSettings(){store.set("inf-settings",{margin:state.margin,internal:state.internal});}
+function saveSettings(){store.set("inf-settings",{internal:state.internal});}
 const sig=()=>JSON.stringify([state.cart.map(i=>i.id+":"+i.sell),state.open.name.trim(),(state.open.client||"").trim(),state.budget,state.open.status]);
 const isDirty=()=>state.cart.length>0||state.open.id||state.open.name? sig()!==state.open.savedSig : false;
 
@@ -946,6 +965,22 @@ function campBadge(list){
   const label=list.length===1?`في «${esc(names[0].length>18?names[0].slice(0,18)+"…":names[0])}»`:`في ${list.length} حملات`;
   return `<span class="inCamp" title="${esc(names.join("، "))}">${UI.folder}${label}</span>`;
 }
+// the list is the team sheet itself: one column per sheet column, in the sheet's order
+const DASH='<span class="dash">—</span>';
+function pcell(i,t,w){ // one price cell: ad type t («home»/«cover»), w «sell» (official) or «cost» (OutMark)
+  if(isDeal(i))return t==="home"&&w==="sell"?`<span class="deal">${DEAL_TXT}</span>`:DASH;
+  const v=i.prices&&i.prices[t]?i.prices[t][w]:null;return v!=null?`<span class="num">${fmt(v)}</span>`:DASH;}
+function linkCell(i){const acc=accountsOf(i).filter(a=>cleanLink(a.link));
+  if(!acc.length)return DASH;
+  return `<span class="accs">${acc.map(a=>{const l=cleanLink(a.link);
+    return `<a class="acc p-${pk(a.platform)}" href="${esc(l)}" target="_blank" rel="noopener noreferrer" title="${esc(l)}">${pIcon(a.platform)}<span class="h">${esc(handleOf(l))}</span></a>`;}).join("")}</span>`;}
+function phoneCell(i){const ph=String(i.phone||"").trim();if(!ph)return DASH;const tel=telOf(ph);
+  return tel?`<a class="tel" href="tel:${esc(tel)}" dir="ltr">${esc(ph)}</a>`:`<span class="ptxt">${esc(ph)}</span>`;}
+const COLS=[
+  {k:"cat",l:"الفئة"},
+  {k:"hs",l:"السعر الرسمي منزلي",n:1},{k:"hc",l:"السعر لأوت مارك منزلي",n:1,int:1},
+  {k:"cs",l:"السعر الرسمي تغطية",n:1},{k:"cc",l:"السعر لأوت مارك تغطية",n:1,int:1},
+  {k:"plat",l:"المنصة"},{k:"acc",l:"طريقة الوصول"},{k:"ph",l:"رقم التواصل"},{k:"link",l:"رابط الحساب"},{k:"notes",l:"الملاحظات"},{k:"reg",l:"المنطقة"}];
 function renderList(){
   const rows=filtered(),inCart=inCartSet(),rc=regionColor(),mem=membership();
   const rem=state.budget!=null?state.budget-totals(state.cart).sell:null;
@@ -955,24 +990,30 @@ function renderList(){
     (byBudget?` · سعرهم ضمن المتبقي <b class="num">${fmt(Math.max(0,rem))}</b> ر.س`:"");
   $("addAll").textContent=notIn?`أضف كل النتائج (${fmt(notIn)})`:"أُضيفت كل النتائج";
   $("addAll").disabled=!notIn;
-  const head=`<div class="row head"><span></span><span>اسم المؤثر</span><span>الحسابات</span><span>الفئة</span><span>المنطقة</span><span class="end internal">سعر أوت مارك</span><span class="end">السعر الرسمي</span></div>`;
-  if(!rows.length){$("list").innerHTML=head+`<div class="empty">${!state.lib.length?"قائمة المؤثرين فارغة. استورد ملف المؤثرين أو رابط Google Sheets من زر «استيراد ملف Excel».":byBudget&&rem<=0?"اكتملت ميزانية الحملة. لعرض باقي المؤثرين أوقف «ضمن الميزانية المتبقية فقط».":
+  if(!rows.length){$("list").innerHTML=`<div class="empty">${!state.lib.length?"قائمة المؤثرين فارغة. استورد ملف المؤثرين أو رابط Google Sheets من زر «استيراد ملف Excel».":byBudget&&rem<=0?"اكتملت ميزانية الحملة. لعرض باقي المؤثرين أوقف «ضمن الميزانية المتبقية فقط».":
     byBudget?"لا يوجد مؤثرون سعرهم ضمن المتبقي من الميزانية بهذه الفلاتر. وسّع الفلاتر أو أوقف «ضمن الميزانية المتبقية فقط».":"لا يوجد مؤثرون مطابقون لهذه الفلاتر. وسّع نطاق السعر أو امسح الفلاتر."}</div>`;return;}
   const vis=rows.slice(0,state.shown);
-  $("list").innerHTML=head+vis.map(i=>{
-    const sel=inCart.has(i.id),over=!sel&&rem!=null&&i.sell>rem;
-    const fol=fmtFollowers(i.followers);
-    const sub=[fol?`<span class="num">${esc(fol)}</span> متابع`:"",i.access?`<span class="acm internal">${esc(i.access)}</span>`:"",campBadge(mem.get(i.id))].filter(Boolean).join("");
-    return `<div class="row${sel?" sel":""}${state.delMode&&state.delSel.has(i.id)?" picked":""}" data-id="${esc(i.id)}">
-      ${state.delMode?`<button class="add pick" data-act="pick" aria-pressed="${state.delSel.has(i.id)}" aria-label="تحديد ${esc(i.name)} للحذف">${state.delSel.has(i.id)?UI.ok:""}</button>`
-        :`<button class="add" data-act="toggle" aria-pressed="${sel}" aria-label="${sel?"إزالة":"إضافة"} ${esc(i.name)}">${sel?UI.ok:UI.plus}</button>`}
-      <div class="who">${avatar(i)}<div class="txt"><button class="nameBtn" data-act="profile" title="عرض ملف ${esc(i.name)}">${esc(i.name)}</button>${sub?`<span class="sub">${sub}</span>`:""}</div></div>
-      ${accList(i)}
-      ${catBadge(i.category)}
-      <span class="reg"><i style="background:${rc.get(i.region)}"></i>${esc(i.region)}</span>
-      <span class="end cost internal">${priceCell(i,"cost")}</span>
-      <span class="end sellc${over?" over":""}" ${over?'title="أعلى من المتبقي في الميزانية"':""}>${priceCell(i,"sell")}</span>
-    </div>`;}).join("")+(rows.length>vis.length?`<div class="more"><button class="btn" id="showMore">اعرض ${fmt(Math.min(PAGE,rows.length-vis.length))} إضافيًا</button></div>`:"");
+  const head=`<thead><tr><th class="c-add" aria-label="إضافة"></th><th class="c-name">اسم المؤثرة</th>${COLS.map(c=>`<th class="${c.n?"c-num":""}${c.int?" internal":""}">${c.l}</th>`).join("")}<th class="c-ed" aria-label="تعديل"></th></tr></thead>`;
+  const body=vis.map(i=>{
+    const sel=inCart.has(i.id),over=!sel&&rem!=null&&i.sell>rem,picked=state.delMode&&state.delSel.has(i.id);
+    const badge=campBadge(mem.get(i.id)),fol=fmtFollowers(i.followers);
+    const cell={
+      cat:i.category?catBadge(i.category):DASH,
+      hs:pcell(i,"home","sell"),hc:pcell(i,"home","cost"),cs:pcell(i,"cover","sell"),cc:pcell(i,"cover","cost"),
+      plat:i.platform&&i.platform!=="غير محدد"?`<span class="pt">${pico(i.platform)}${esc(i.platform)}</span>`:DASH,
+      acc:i.access?esc(i.access):DASH,ph:phoneCell(i),link:linkCell(i),
+      notes:i.notes?`<span class="note" title="${esc(i.notes)}">${esc(i.notes)}</span>`:DASH,
+      reg:`<span class="reg"><i style="background:${rc.get(i.region)}"></i>${esc(i.region)}</span>`};
+    const overCell=i.type==="cover"?"cs":"hs";
+    return `<tr class="irow${sel?" sel":""}${picked?" picked":""}" data-id="${esc(i.id)}">
+      <td class="c-add">${state.delMode?`<button class="add pick" data-act="pick" aria-pressed="${state.delSel.has(i.id)}" aria-label="تحديد ${esc(i.name)} للحذف">${state.delSel.has(i.id)?UI.ok:""}</button>`
+        :`<button class="add" data-act="toggle" aria-pressed="${sel}" aria-label="${sel?"إزالة":"إضافة"} ${esc(i.name)}">${sel?UI.ok:UI.plus}</button>`}</td>
+      <td class="c-name"><button class="nameBtn" data-act="profile" title="عرض ملف ${esc(i.name)}">${esc(i.name)}</button>${badge||fol?`<span class="sub">${fol?`<span class="num">${esc(fol)}</span> متابع`:""}${badge}</span>`:""}</td>
+      ${COLS.map(c=>`<td class="${c.n?"c-num":""}${c.int?" internal":""}${over&&c.k===overCell?" over":""}"${over&&c.k===overCell?' title="أعلى من المتبقي في الميزانية"':""}>${cell[c.k]}</td>`).join("")}
+      <td class="c-ed"><button class="edBtn" data-act="edit" title="تعديل بيانات ${esc(i.name)}" aria-label="تعديل بيانات ${esc(i.name)}">${UI.edit}</button></td>
+    </tr>`;}).join("");
+  $("list").innerHTML=`<div class="tscroll"><table class="itab">${head}<tbody>${body}</tbody></table></div>`+
+    (rows.length>vis.length?`<div class="more"><button class="btn" id="showMore">اعرض ${fmt(Math.min(PAGE,rows.length-vis.length))} إضافيًا</button></div>`:"");
 }
 
 // ---------- render: campaigns ----------
@@ -1061,7 +1102,7 @@ function renderCart(){
   const pct=t.cost?Math.round(t.profit/t.cost*100):0;
   $("totals").innerHTML=`<div><span>إجمالي العرض للعميل</span><span class="big num">${fmt(t.sell)} <small style="font-size:13px;font-weight:500">ر.س</small></span></div>
     <div class="internal muted"><span>تكلفة المؤثرين</span><span class="num">${fmt(t.cost)}</span></div>
-    <div class="internal"><span class="muted">الربح</span><span class="profit"><span class="num">${fmt(t.profit)}</span> · هامش <span class="num">${pct}%</span></span></div>`;
+    <div class="internal"><span class="muted">الربح</span><span class="profit"><span class="num">${fmt(t.profit)}</span> · نسبة الربح <span class="num">${pct}%</span></span></div>`;
   ["expClient","expInternal","copyTable","clearCart"].forEach(id=>$(id).disabled=!items.length);
   $("saveCamp").disabled=!items.length||(state.open.id&&!dirty);
   $("saveCamp").textContent=state.open.id?(dirty?"حفظ التعديلات":"الحملة محفوظة"):"حفظ الحملة";
@@ -1124,8 +1165,6 @@ function renderAll(){
   $("internal").checked=state.internal;
   $("sampleNotice").hidden=state.libSource!=="sample";
   $("resetSample").hidden=state.libSource!=="local";
-  $("mNote").textContent=state.margin;
-  $("margin").value=state.margin;
   const home=state.view==="home";
   $("homeView").hidden=!home;$("pickView").hidden=home;$("cartBar").hidden=home;
   if(home)$("cart").classList.remove("open");
@@ -1148,8 +1187,9 @@ function armed(btn,label,armedLabel){ // two-step confirm inside the page
 
 $("list").addEventListener("click",e=>{
   if(e.target.closest("#showMore")){state.shown+=PAGE;renderList();return;}
-  const row=e.target.closest(".row:not(.head)");if(!row)return;
+  const row=e.target.closest(".irow");if(!row)return;
   if(e.target.closest("[data-act=profile]")){openProfile(row.dataset.id);return;}
+  if(e.target.closest("[data-act=edit]")){state.profile=row.dataset.id;state.editing=true;renderProfile();return;}
   if(e.target.closest("[data-act=pick]")){const id=row.dataset.id;state.delSel.has(id)?state.delSel.delete(id):state.delSel.add(id);renderList();renderDelBar();return;}
   if(e.target.closest("[data-act=toggle]"))toggle(row.dataset.id);
 });
@@ -1335,9 +1375,6 @@ async function initDb(db){
     assembleLibrary();
     if(firstLib){firstLib=false;moveLocalLibrary();}
   },()=>{});
-  db.doc("settings/main").onSnapshot(s=>{
-    if(s.exists){const m=+s.data().margin;if(isFinite(m)&&m!==state.margin){state.margin=m;state.lib.forEach(derive);saveSettings();renderAll();}}
-  },()=>{});
 }
 
 // ---------- delete from the list (one, a selection, or everyone) ----------
@@ -1475,9 +1512,6 @@ function openImport(open){$("importPanel").hidden=!open;$("openImport").setAttri
 $("openImport").addEventListener("click",()=>openImport($("importPanel").hidden));
 $("noticeImport").addEventListener("click",()=>openImport(true));
 $("closeImport").addEventListener("click",()=>openImport(false));
-$("margin").addEventListener("change",async e=>{const v=parseNum(e.target.value);state.margin=v==null?20:Math.max(0,v);
-  state.lib.forEach(derive);saveSettings();renderAll();
-  if(state.db){try{await state.db.doc("settings/main").set({margin:state.margin});}catch(err){}}});
 $("resetSample").addEventListener("click",()=>{state.lib=sampleLib();state.libSource="sample";store.del("inf-lib3");store.del("inf-lib2");renderAll();toast("استُعيدت البيانات التجريبية");});
 const drop=$("drop");
 ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over");}));
@@ -1517,8 +1551,7 @@ let pending=null; // {items, source, sheets, noLink, noPrice}
 const importMode=()=>(document.querySelector("input[name=imode]:checked")||{}).value||"add";
 document.querySelectorAll("input[name=imode]").forEach(r=>r.addEventListener("change",()=>{if(pending)renderImportPreview();}));
 function handleWorkbook(wb,source){
-  const single=(document.querySelector("input[name=single]:checked")||{}).value||"cost";
-  const res=parseWorkbook(wb,single);
+  const res=parseWorkbook(wb);
   if(!res.items.length){pending=null;$("impPreview").hidden=true;
     toast("لم يُعثر على صف عناوين يحتوي «المشهور» أو «الاسم» مع عمود سعر. راجع العناوين وحاول مجددًا.");return;}
   pending=Object.assign(res,{source});
@@ -1613,8 +1646,8 @@ function mapHeader(texts){
     else if(c.phone==null&&/(رقم|جوال|هاتف|واتس|^التواصل)/.test(t))c.phone=k;
     else if(t.length<24&&!/^منص/.test(t)&&!/(سعر|تكلف|قيمة|مبلغ|متابع)/.test(t)&&normPlatform(t))c.accCols.push({k,platform:normPlatform(t)}); // e.g. a «سناب» column full of links
     else if(c.link==null&&/^(ال)?(حساب|حسابات|رابط|روابط|لينك|لينكات)/.test(t))c.link=k;
-    else if(c.sell==null&&/(سعر البيع|سعر العميل|البيع|للعميل)/.test(t))c.sell=k;
-    else if(c.cost==null&&/(التكلفة|تكلفة|سعر المؤثر|قيمة ال[إا]علان|القيمة|السعر|المبلغ)/.test(t))c.cost=k;
+    else if(c.cost==null&&/(التكلفة|تكلفة|سعر المؤثر)/.test(t))c.cost=k;
+    else if(c.sell==null&&/(سعر البيع|سعر العميل|البيع|للعميل|قيمة ال[إا]علان|القيمة|السعر|المبلغ)/.test(t))c.sell=k;
     else if(c.region==null&&/(المنطق|المدين)/.test(t))c.region=k;
     else if(c.platform==null&&/^(المنصة|المنصه|منصة|منصه)$/.test(t))c.platform=k;
     else if(c.link==null&&/(بروفايل|رابط الحساب|لينك الحساب|رابط المشهور|profile)/i.test(t))c.link=k;
@@ -1659,7 +1692,7 @@ function mergeFill(items){
     ex.platform=ex.accounts[0]?.platform||ex.platform;ex.link=ex.accounts.find(a=>a.link)?.link||"";}
   return [...m.values()];
 }
-function parseWorkbook(wb,single){
+function parseWorkbook(wb){
   const out=[];let sheets=0,noLink=0,noPrice=0;
   for(const sn of wb.SheetNames){
     const ws=wb.Sheets[sn];if(!ws||!ws["!ref"])continue;
@@ -1674,8 +1707,7 @@ function parseWorkbook(wb,single){
       if(sec){const p=normPlatform(sec);if(p)platform=p;const d=DEAL_SECTION.test(sec);if(d!==deal){deal=d;cols=null;}}
       // region title inside a tab: «منطقة الرياض», or a lone title across a merged row («الخرج», «تبوك»)
       else if(filled.length===1&&filled[0].length<40&&(/^منطق[ةه]\s+\S/.test(filled[0])||mergedRows.has(r))){region=filled[0].replace(/^منطق[ةه]\s+/,"").trim();continue;}
-      const h=mapHeader(texts);if(h.name!=null&&(h.cost!=null||h.sell!=null||h.prices||deal)){cols=h;
-        if(cols.sell==null&&cols.cost!=null&&single==="sell"){cols.sell=cols.cost;cols.cost=null;}continue;}
+      const h=mapHeader(texts);if(h.name!=null&&(h.cost!=null||h.sell!=null||h.prices||deal)){cols=h;continue;}
       if(!cols)continue;
       const name=(texts[cols.name]||"").replace(/\s+/g," ").trim();
       if(!name||/(اجمال|إجمال|المجموع)/.test(name))continue;
